@@ -1,0 +1,38 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-biz307amplify-dev-135947-authRole",
+      "UnauthRoleArn": "arn:aws:iam::104621577074:role/amplify-biz307amplify-dev-135947-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::104621577074:role/amplify-biz307amplify-dev-135947-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-biz307amplify-dev-135947-deployment",
+      "UnauthRoleName": "amplify-biz307amplify-dev-135947-unauthRole",
+      "StackName": "amplify-biz307amplify-dev-135947",
+      "StackId": "arn:aws:cloudformation:us-east-1:104621577074:stack/amplify-biz307amplify-dev-135947/df491370-4e4d-11ed-87f4-0ed95facd345",
+      "AmplifyAppId": "d2o3orj6eawa8a"
+    },
+    "categories": {
+      "function": {
+        "createMeeting": {
+          "deploymentBucketName": "amplify-biz307amplify-dev-135947-deployment",
+          "s3Key": "amplify-builds/createMeeting-674e7432535766454136-build.zip"
+        },
+        "endMeeting": {
+          "deploymentBucketName": "amplify-biz307amplify-dev-135947-deployment",
+          "s3Key": "amplify-builds/endMeeting-695345342b3230747650-build.zip"
+        },
+        "transcribeMeeting": {
+          "deploymentBucketName": "amplify-biz307amplify-dev-135947-deployment",
+          "s3Key": "amplify-builds/transcribeMeeting-4e5a6a7247436138796c-build.zip"
+        }
+      },
+      "auth": {
+        "biz307amplify69969494": {},
+        "biz307amplify0d466e1f0d466e1f": {}
+      },
+      "api": {
+        "meetingApi": {}
+      }
+    }
+  }
+}

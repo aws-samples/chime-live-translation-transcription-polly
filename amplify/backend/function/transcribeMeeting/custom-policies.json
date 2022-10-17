@@ -1,0 +1,11 @@
+[
+  {
+    "Action": [
+      "chime:startMeetingTranscription",
+      "chime:stopMeetingTranscription"
+    ],
+    "Resource": [
+      "*"
+    ]
+  }
+]

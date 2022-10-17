@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "paths": {
+    "/create": {
+      "name": "/create",
+      "lambdaFunction": "createMeeting",
+      "permissions": {
+        "setting": "open"
+      }
+    },
+    "/end": {
+      "name": "/end",
+      "lambdaFunction": "endMeeting",
+      "permissions": {
+        "setting": "open"
+      }
+    },
+    "/transcribe": {
+      "name": "/transcribe",
+      "lambdaFunction": "transcribeMeeting",
+      "permissions": {
+        "setting": "open"
+      }
+    }
+  }
+}
