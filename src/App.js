@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import {
   useMeetingManager,
-  useMeetingEvent,
+  // useMeetingEvent,
   useLocalVideo,
   useAudioVideo,
   ControlBar,
@@ -37,11 +37,11 @@ Amplify.Logger.LOG_LEVEL = 'DEBUG';
 const App = () => {
   const [currentCredentials, setCurrentCredentials] = useState({});
   const [currentSession, setCurrentSession] = useState({});
-  const meetingEvent = useMeetingEvent();
+  // const meetingEvent = useMeetingEvent();
   const meetingManager = useMeetingManager();
   const meetingStatus = useMeetingStatus();
   const [meetingId, setMeetingId] = useState('');
-  const [attendeeId, setAttendeeId] = useState('');
+  // const [attendeeId, setAttendeeId] = useState('');
   const [requestId, setRequestId] = useState('');
   const [transcripts, setTranscripts] = useState([]);
   const [lines, setLine] = useState([]);
@@ -61,19 +61,36 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    if (meetingEvent) {
-      // console.log(`meetingEvent: ${JSON.stringify(meetingEvent)}`);
-    }
-  }, [meetingEvent]);
-
-  useEffect(() => {
     async function tog() {
       if (meetingStatus === MeetingStatus.Succeeded) {
         await toggleVideo();
       }
+      if (meetingStatus === MeetingStatus.Ended) {
+        setLine([]);
+        setTranscribeStatus(false);
+      }
     }
     tog();
   }, [meetingStatus]);
+
+  useEffect(() => {
+    if (!audioVideo) {
+      console.log('No audioVideo');
+      return;
+    }
+    console.log('Audio Video found');
+    audioVideo.realtimeSubscribeToReceiveDataMessage('transcribe', (data) => {
+      console.log(`realtimeData: ${JSON.stringify(data)}`);
+      const receivedData = (data && data.json()) || {};
+      const { message } = receivedData;
+      console.log(`incomingTranscribeStatus: ${message}`);
+      setTranscribeStatus(message);
+    });
+
+    return () => {
+      audioVideo.realtimeUnsubscribeFromReceiveDataMessage('Message');
+    };
+  }, [audioVideo]);
 
   useEffect(() => {
     console.log(transcripts);
@@ -139,20 +156,18 @@ const App = () => {
     event.preventDefault();
     try {
       await API.post('meetingApi', '/end', { body: { meetingId: meetingId } });
-      setLine([]);
-      setTranscribeStatus(false);
     } catch (err) {
-      console.log(err);
+      console.log(`{err in handleEnd: ${err}`);
     }
   };
 
   const handleJoin = async (event) => {
     event.preventDefault();
     const email = (await Auth.currentUserInfo()).attributes.email;
-    console.log(email);
+    const name = (await Auth.currentUserInfo()).attributes.name;
     try {
       const joinResponse = await API.post('meetingApi', '/create', {
-        body: { email: email, requestId: requestId },
+        body: { name: name, email: email, requestId: requestId },
       });
       const meetingSessionConfiguration = new MeetingSessionConfiguration(
         joinResponse.Meeting,
@@ -167,9 +182,9 @@ const App = () => {
       await meetingManager.start();
       meetingManager.invokeDeviceProvider(DeviceLabels.AudioAndVideo);
       setMeetingId(joinResponse.Meeting.MeetingId);
-      setAttendeeId(joinResponse.Attendee.AttendeeId);
+      // setAttendeeId(joinResponse.Attendee.AttendeeId);
     } catch (err) {
-      console.log(err);
+      console.log(`err in handleJoin: ${err}`);
     }
   };
 
@@ -180,9 +195,15 @@ const App = () => {
         body: { action: !transcribeStatus, meetingId: meetingId },
       });
       setTranscribeStatus(!transcribeStatus);
-      console.log(transcribeResponse);
+      console.log(`Sending message: ${JSON.stringify(!transcribeStatus)}`);
+      audioVideo.realtimeSendDataMessage(
+        'transcribe',
+        { message: !transcribeStatus },
+        30000,
+      );
+      console.log(`transcribeResponse: ${transcribeResponse}`);
     } catch (err) {
-      console.log(err);
+      console.log(`err in handleTranscribe: ${err}`);
     }
   };
 
@@ -212,13 +233,17 @@ const App = () => {
                 type='text'
                 style={{ marginLeft: '20px', marginRight: '20px' }}
               />
-              <ControlBarButton {...JoinButtonProps} />
-              <ControlBarButton {...LeaveButtonProps} />
-              <ControlBarButton {...EndButtonProps} />
-              <ControlBarButton {...TranscribeButtonProps} />
-              <AudioInputControl />
-              <AudioOutputControl />
-              <VideoInputControl />
+              {!audioVideo && <ControlBarButton {...JoinButtonProps} />}
+              {audioVideo && (
+                <>
+                  <ControlBarButton {...LeaveButtonProps} />
+                  <ControlBarButton {...EndButtonProps} />
+                  <ControlBarButton {...TranscribeButtonProps} />
+                  <AudioInputControl />
+                  <AudioOutputControl />
+                  <VideoInputControl />
+                </>
+              )}
             </ControlBar>
           </SpaceBetween>
 

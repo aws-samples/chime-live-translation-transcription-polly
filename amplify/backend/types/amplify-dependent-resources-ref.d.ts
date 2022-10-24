@@ -27,7 +27,7 @@ export type AmplifyDependentResourcesAttributes = {
         }
     },
     "auth": {
-        "biz307amplify0d466e1f0d466e1f": {
+        "biz307amplify5b0bba085b0bba08": {
             "IdentityPoolId": "string",
             "IdentityPoolName": "string",
             "UserPoolId": "string",
@@ -35,6 +35,18 @@ export type AmplifyDependentResourcesAttributes = {
             "UserPoolName": "string",
             "AppClientIDWeb": "string",
             "AppClientID": "string"
+        }
+    },
+    "hosting": {
+        "S3AndCloudFront": {
+            "Region": "string",
+            "HostingBucketName": "string",
+            "WebsiteURL": "string",
+            "S3BucketSecureURL": "string",
+            "CloudFrontDistributionID": "string",
+            "CloudFrontDomainName": "string",
+            "CloudFrontSecureURL": "string",
+            "CloudFrontOriginAccessIdentity": "string"
         }
     }
 }

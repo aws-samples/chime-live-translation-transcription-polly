@@ -25,9 +25,13 @@ export async function handler(event) {
   console.log(event);
   const body = JSON.parse(event.body);
   const requestId = body.requestId;
+  const name = body.name;
   const meetingInfo = await createMeeting(requestId || randomUUID());
   if (meetingInfo) {
-    const attendeeInfo = await createAttendee(meetingInfo.Meeting.MeetingId);
+    const attendeeInfo = await createAttendee(
+      meetingInfo.Meeting.MeetingId,
+      name,
+    );
     if (attendeeInfo) {
       const responseInfo = {
         Meeting: meetingInfo.Meeting,
@@ -68,13 +72,13 @@ async function createMeeting(requestId) {
   }
 }
 
-async function createAttendee(meetingId) {
+async function createAttendee(meetingId, name) {
   console.log(`Creating Attendee for Meeting: ${meetingId}`);
   try {
     const attendeeInfo = await chimeSdkMeetingsClient.send(
       new CreateAttendeeCommand({
         MeetingId: meetingId,
-        ExternalUserId: randomUUID(),
+        ExternalUserId: name,
       }),
     );
     return attendeeInfo;

@@ -15,23 +15,26 @@
       "function": {
         "createMeeting": {
           "deploymentBucketName": "amplify-biz307amplify-dev-135947-deployment",
-          "s3Key": "amplify-builds/createMeeting-674e7432535766454136-build.zip"
+          "s3Key": "amplify-builds/createMeeting-59742b2f506f76534764-build.zip"
         },
         "endMeeting": {
           "deploymentBucketName": "amplify-biz307amplify-dev-135947-deployment",
-          "s3Key": "amplify-builds/endMeeting-695345342b3230747650-build.zip"
+          "s3Key": "amplify-builds/endMeeting-52376e485472574c5a6c-build.zip"
         },
         "transcribeMeeting": {
           "deploymentBucketName": "amplify-biz307amplify-dev-135947-deployment",
-          "s3Key": "amplify-builds/transcribeMeeting-4e5a6a7247436138796c-build.zip"
+          "s3Key": "amplify-builds/transcribeMeeting-33634675444850393944-build.zip"
         }
       },
       "auth": {
         "biz307amplify69969494": {},
-        "biz307amplify0d466e1f0d466e1f": {}
+        "biz307amplify5b0bba085b0bba08": {}
       },
       "api": {
         "meetingApi": {}
+      },
+      "hosting": {
+        "S3AndCloudFront": {}
       }
     }
   }

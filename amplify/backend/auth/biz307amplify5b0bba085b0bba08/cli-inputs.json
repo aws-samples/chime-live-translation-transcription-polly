@@ -1,10 +1,10 @@
 {
   "version": "1",
   "cognitoConfig": {
-    "identityPoolName": "biz307amplify0d466e1f_identitypool_0d466e1f",
+    "identityPoolName": "biz307amplify5b0bba08_identitypool_5b0bba08",
     "allowUnauthenticatedIdentities": false,
-    "resourceNameTruncated": "biz3070d466e1f",
-    "userPoolName": "biz307amplify0d466e1f_userpool_0d466e1f",
+    "resourceNameTruncated": "biz3075b0bba08",
+    "userPoolName": "biz307amplify5b0bba08_userpool_5b0bba08",
     "autoVerifiedAttributes": [
       "email"
     ],
@@ -20,7 +20,8 @@
     "passwordPolicyMinLength": 8,
     "passwordPolicyCharacters": [],
     "requiredAttributes": [
-      "email"
+      "email",
+      "name"
     ],
     "aliasAttributes": [],
     "userpoolClientGenerateSecret": false,
@@ -31,10 +32,10 @@
     "userpoolClientReadAttributes": [
       "email"
     ],
-    "userpoolClientLambdaRole": "biz3070d466e1f_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "biz3075b0bba08_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "0d466e1f",
-    "resourceName": "biz307amplify0d466e1f0d466e1f",
+    "sharedId": "5b0bba08",
+    "resourceName": "biz307amplify5b0bba085b0bba08",
     "authSelections": "identityPoolAndUserPool",
     "useDefault": "manual",
     "thirdPartyAuth": false,
@@ -50,4 +51,4 @@
     "usernameCaseSensitive": false,
     "useEnabledMfas": true
   }
-}
+} 
