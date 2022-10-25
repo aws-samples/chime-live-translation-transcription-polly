@@ -5,6 +5,7 @@
   "dependencies": {
     "@aws-amplify/ui-react": "^3.5.8",
     "@aws-sdk/client-chime-sdk-meetings": "^3.188.0",
+    "@babel/eslint-parser": "^7.19.1",
     "@cloudscape-design/components": "^3.0.76",
     "@cloudscape-design/global-styles": "^1.0.1",
     "@testing-library/jest-dom": "^5.16.5",
@@ -14,6 +15,7 @@
     "amazon-chime-sdk-js": "^3.8.0",
     "aws-amplify": "^4.3.39",
     "d3-color": "3.1.0",
+    "eslint-plugin-jsx": "^0.1.0",
     "minimatch": "^5.1.0",
     "nth-check": "^2.1.1",
     "react": "^18.2.0",
@@ -47,7 +49,5 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {
-    "babel-eslint": "^10.1.0"
-  }
+  "devDependencies": {}
 }

@@ -63,7 +63,7 @@ async function startMeetingTranscription(meetingId) {
           EngineTranscribeSettings: {
             IdentifyLanguage: true,
             LanguageOptions:
-              'en-US,en-GB,es-US,fr-CA,fr-FR,en-AU,it-IT,de-DE,pt-BR,ja-JP,ko-KR,zh-CN',
+              'en-US,es-US,fr-CA,it-IT,de-DE,pt-BR,ja-JP,ko-KR,zh-CN',
           },
         },
       }),

@@ -2,5 +2,5 @@
   "rules": {
     "react-hooks/exhaustive-deps": "off"
   },
-  "parser": "babel-eslint"
+  "parser": "@babel/eslint-parser"
 }
