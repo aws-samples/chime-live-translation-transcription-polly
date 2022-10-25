@@ -61,7 +61,7 @@ async function startMeetingTranscription(meetingId) {
         MeetingId: meetingId,
         TranscriptionConfiguration: {
           EngineTranscribeSettings: {
-            LanguageCode: 'en-US',
+            IdentifyLanguage: true,
           },
         },
       }),

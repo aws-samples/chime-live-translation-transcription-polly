@@ -24,6 +24,7 @@ import {
 } from 'amazon-chime-sdk-component-library-react';
 import {
   Container,
+  ContentLayout,
   Header,
   SpaceBetween,
   Button,
@@ -42,7 +43,19 @@ import awsExports from './aws-exports';
 Amplify.configure(awsExports);
 Amplify.addPluggable(new AmazonAIPredictionsProvider());
 
-Amplify.Logger.LOG_LEVEL = 'DEBUG';
+// Amplify.Logger.LOG_LEVEL = 'DEBUG';
+
+const languages = [
+  { language: 'Arabic', code: 'ar' },
+  { language: 'Chinese (Simplified)', code: 'zh' },
+  { language: 'English', code: 'en' },
+  { language: 'French (Canada)', code: 'fr-CA' },
+  { language: 'Hebrew', code: 'he' },
+  { language: 'Hindi', code: 'hi' },
+  { language: 'Japanese', code: 'ja' },
+  { language: 'Portuguese (Brazil)', code: 'pt' },
+  { language: 'Spanish (Mexico)', code: 'es-MX' },
+];
 
 const App = () => {
   const [currentCredentials, setCurrentCredentials] = useState({});
@@ -57,6 +70,7 @@ const App = () => {
   const [lines, setLine] = useState([]);
   const [transcribeStatus, setTranscribeStatus] = useState(false);
   const [translateStatus, setTranslateStatus] = useState(false);
+  const [targetLanguage, setTargetLanguage] = useState('');
   const audioVideo = useAudioVideo();
 
   const { toggleVideo } = useLocalVideo();
@@ -119,6 +133,7 @@ const App = () => {
                     source: {
                       text: transcripts.results[0].alternatives[0].transcript,
                     },
+                    targetLanguage: targetLanguage,
                   },
                 });
                 console.log(
@@ -181,8 +196,13 @@ const App = () => {
 
   const TranslateButtonProps = {
     icon: translateStatus ? <Pause /> : <Attendees />,
+    popOver: languages.map((language) => ({
+      onClick: () => setTargetLanguage(language.code),
+      children: <span>{language.language}</span>,
+    })),
+
     onClick: (event) => setTranslateStatus(!translateStatus),
-    label: 'Transcribe',
+    label: 'Translate',
   };
 
   const handleLeave = async (event) => {
@@ -248,62 +268,79 @@ const App = () => {
   return (
     <Authenticator loginMechanisms={['email']}>
       {({ signOut, user }) => (
-        <SpaceBetween direction='horizontal' size='xs'>
-          <SpaceBetween direction='vertical' size='l'>
-            <Container
-              header={<Header variant='h2'>Amazon Chime SDK Meeting</Header>}
-              actions={<Button onClick={signOut}>Sign out</Button>}
-            >
-              <div style={{ height: '600px', width: '720px' }}>
-                <VideoTileGrid />
-              </div>
-            </Container>
-
-            <ControlBar
-              showLabels={true}
-              responsive={true}
-              layout='undocked-horizontal'
-            >
-              <Input
-                showClear={true}
-                onChange={(e) => setRequestId(e.target.value)}
-                sizing={'md'}
-                value={requestId}
-                placeholder='Request ID'
-                type='text'
-                style={{ marginLeft: '20px', marginRight: '20px' }}
-              />
-
-              {!audioVideo && <ControlBarButton {...JoinButtonProps} />}
-              {audioVideo && (
-                <>
-                  <ControlBarButton {...LeaveButtonProps} />
-                  <ControlBarButton {...EndButtonProps} />
-                  <ControlBarButton {...TranscribeButtonProps} />
-                  <ControlBarButton {...TranslateButtonProps} />
-                  <AudioInputControl />
-                  <AudioOutputControl />
-                  <VideoInputControl />
-                </>
-              )}
-            </ControlBar>
-          </SpaceBetween>
-
-          <Container header={<Header variant='h2'>Transcription</Header>}>
-            <SpaceBetween size='xs'>
-              <div style={{ height: '600px', width: '240px' }}>
-                {lines
-                  .slice(Math.max(lines.length - 10, 0))
-                  .map((line, index) => (
-                    <div key={index}>
-                      {line}
-                      <br />
-                    </div>
-                  ))}
-              </div>
+        <ContentLayout
+          header={
+            <SpaceBetween size='m'>
+              <Header
+                className='ContentHeader'
+                variant='h2'
+                actions={
+                  <Button variant='primary' onClick={signOut}>
+                    Sign out
+                  </Button>
+                }
+              >
+                Amazon Chime SDK Meeting
+              </Header>
             </SpaceBetween>
-          </Container>
-        </SpaceBetween>
+          }
+        >
+          <SpaceBetween direction='horizontal' size='xs'>
+            <SpaceBetween direction='vertical' size='l'>
+              <Container
+                className='MeetingContainer'
+                footer={
+                  <ControlBar
+                    showLabels={true}
+                    responsive={true}
+                    layout='undocked-horizontal'
+                  >
+                    <Input
+                      showClear={true}
+                      onChange={(e) => setRequestId(e.target.value)}
+                      sizing={'md'}
+                      value={requestId}
+                      placeholder='Request ID'
+                      type='text'
+                    />
+
+                    {!audioVideo && <ControlBarButton {...JoinButtonProps} />}
+                    {audioVideo && (
+                      <>
+                        <ControlBarButton {...LeaveButtonProps} />
+                        <ControlBarButton {...EndButtonProps} />
+                        <ControlBarButton {...TranscribeButtonProps} />
+                        <ControlBarButton {...TranslateButtonProps} />
+                        <AudioInputControl />
+                        <AudioOutputControl />
+                        <VideoInputControl />
+                      </>
+                    )}
+                  </ControlBar>
+                }
+              >
+                <div style={{ height: '600px', width: '720px' }}>
+                  <VideoTileGrid />
+                </div>
+              </Container>
+            </SpaceBetween>
+
+            <Container header={<Header variant='h2'>Transcription</Header>}>
+              <SpaceBetween size='xs'>
+                <div style={{ height: '663px', width: '240px' }}>
+                  {lines
+                    .slice(Math.max(lines.length - 10, 0))
+                    .map((line, index) => (
+                      <div key={index}>
+                        {line}
+                        <br />
+                      </div>
+                    ))}
+                </div>
+              </SpaceBetween>
+            </Container>
+          </SpaceBetween>
+        </ContentLayout>
       )}
     </Authenticator>
   );

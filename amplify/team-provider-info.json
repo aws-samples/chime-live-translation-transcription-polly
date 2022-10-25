@@ -23,7 +23,7 @@
         },
         "transcribeMeeting": {
           "deploymentBucketName": "amplify-biz307amplify-dev-135947-deployment",
-          "s3Key": "amplify-builds/transcribeMeeting-33634675444850393944-build.zip"
+          "s3Key": "amplify-builds/transcribeMeeting-31766b66537a42543743-build.zip"
         }
       },
       "auth": {
