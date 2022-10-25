@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import {
   useMeetingManager,
-  // useMeetingEvent,
   useLocalVideo,
   useAudioVideo,
   ControlBar,
@@ -43,8 +42,6 @@ import awsExports from './aws-exports';
 Amplify.configure(awsExports);
 Amplify.addPluggable(new AmazonAIPredictionsProvider());
 
-// Amplify.Logger.LOG_LEVEL = 'DEBUG';
-
 const languages = [
   { language: 'Arabic', code: 'ar' },
   { language: 'Chinese (Simplified)', code: 'zh' },
@@ -60,11 +57,9 @@ const languages = [
 const App = () => {
   const [currentCredentials, setCurrentCredentials] = useState({});
   const [currentSession, setCurrentSession] = useState({});
-  // const meetingEvent = useMeetingEvent();
   const meetingManager = useMeetingManager();
   const meetingStatus = useMeetingStatus();
   const [meetingId, setMeetingId] = useState('');
-  // const [attendeeId, setAttendeeId] = useState('');
   const [requestId, setRequestId] = useState('');
   const [transcripts, setTranscripts] = useState([]);
   const [lines, setLine] = useState([]);
@@ -132,6 +127,7 @@ const App = () => {
                   translateText: {
                     source: {
                       text: transcripts.results[0].alternatives[0].transcript,
+                      language: transcripts.results[0].languageCode,
                     },
                     targetLanguage: targetLanguage,
                   },
@@ -159,7 +155,6 @@ const App = () => {
 
   useEffect(() => {
     console.log(`transcribeStatus: ${transcribeStatus}`);
-    // console.log(`audioVideo: ${JSON.stringify(audioVideo)}`);
     if (transcribeStatus) {
       console.log('Subscribing to transcribe');
       audioVideo.transcriptionController.subscribeToTranscriptEvent(
@@ -240,7 +235,6 @@ const App = () => {
       await meetingManager.start();
       meetingManager.invokeDeviceProvider(DeviceLabels.AudioAndVideo);
       setMeetingId(joinResponse.Meeting.MeetingId);
-      // setAttendeeId(joinResponse.Attendee.AttendeeId);
     } catch (err) {
       console.log(`err in handleJoin: ${err}`);
     }

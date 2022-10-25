@@ -62,10 +62,13 @@ async function startMeetingTranscription(meetingId) {
         TranscriptionConfiguration: {
           EngineTranscribeSettings: {
             IdentifyLanguage: true,
+            LanguageOptions:
+              'en-US,en-GB,es-US,fr-CA,fr-FR,en-AU,it-IT,de-DE,pt-BR,ja-JP,ko-KR,zh-CN',
           },
         },
       }),
     );
+
     console.log('Transcribe started');
     console.log(JSON.stringify(transcribeResponse));
     return true;
