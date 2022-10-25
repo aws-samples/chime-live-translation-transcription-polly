@@ -11,6 +11,7 @@ import {
   LeaveMeeting,
   AudioInputControl,
   Input,
+  Attendees,
   DeviceLabels,
   VideoTileGrid,
   Record,
@@ -21,9 +22,17 @@ import {
   MeetingStatus,
   useMeetingStatus,
 } from 'amazon-chime-sdk-component-library-react';
-import { Container, Header, SpaceBetween } from '@cloudscape-design/components';
+import {
+  Container,
+  Header,
+  SpaceBetween,
+  Button,
+} from '@cloudscape-design/components';
 import { Amplify, API, Auth } from 'aws-amplify';
 import { Authenticator } from '@aws-amplify/ui-react';
+import Predictions, {
+  AmazonAIPredictionsProvider,
+} from '@aws-amplify/predictions';
 
 import '@aws-amplify/ui-react/styles.css';
 import '@cloudscape-design/global-styles/index.css';
@@ -31,6 +40,7 @@ import { MeetingSessionConfiguration } from 'amazon-chime-sdk-js';
 
 import awsExports from './aws-exports';
 Amplify.configure(awsExports);
+Amplify.addPluggable(new AmazonAIPredictionsProvider());
 
 Amplify.Logger.LOG_LEVEL = 'DEBUG';
 
@@ -46,6 +56,7 @@ const App = () => {
   const [transcripts, setTranscripts] = useState([]);
   const [lines, setLine] = useState([]);
   const [transcribeStatus, setTranscribeStatus] = useState(false);
+  const [translateStatus, setTranslateStatus] = useState(false);
   const audioVideo = useAudioVideo();
 
   const { toggleVideo } = useLocalVideo();
@@ -68,6 +79,7 @@ const App = () => {
       if (meetingStatus === MeetingStatus.Ended) {
         setLine([]);
         setTranscribeStatus(false);
+        setTranslateStatus(false);
       }
     }
     tog();
@@ -94,20 +106,40 @@ const App = () => {
 
   useEffect(() => {
     console.log(transcripts);
-    if (transcripts) {
-      if (transcripts.results !== undefined) {
-        if (!transcripts.results[0].isPartial) {
-          if (
-            transcripts.results[0].alternatives[0].items[0].confidence > 0.5
-          ) {
-            setLine((lines) => [
-              ...lines,
-              `${transcripts.results[0].alternatives[0].items[0].attendee.externalUserId}: ${transcripts.results[0].alternatives[0].transcript}`,
-            ]);
+    async function transcribeText() {
+      if (transcripts) {
+        if (transcripts.results !== undefined) {
+          if (!transcripts.results[0].isPartial) {
+            if (
+              transcripts.results[0].alternatives[0].items[0].confidence > 0.5
+            ) {
+              if (translateStatus) {
+                var translateResult = await Predictions.convert({
+                  translateText: {
+                    source: {
+                      text: transcripts.results[0].alternatives[0].transcript,
+                    },
+                  },
+                });
+                console.log(
+                  `translateResult: ${JSON.stringify(translateResult.text)}`,
+                );
+                setLine((lines) => [
+                  ...lines,
+                  `${transcripts.results[0].alternatives[0].items[0].attendee.externalUserId}: ${translateResult.text}`,
+                ]);
+              } else {
+                setLine((lines) => [
+                  ...lines,
+                  `${transcripts.results[0].alternatives[0].items[0].attendee.externalUserId}: ${transcripts.results[0].alternatives[0].transcript}`,
+                ]);
+              }
+            }
           }
         }
       }
     }
+    transcribeText();
   }, [transcripts]);
 
   useEffect(() => {
@@ -144,6 +176,12 @@ const App = () => {
   const TranscribeButtonProps = {
     icon: transcribeStatus ? <Pause /> : <Record />,
     onClick: (event) => handleTranscribe(event),
+    label: 'Transcribe',
+  };
+
+  const TranslateButtonProps = {
+    icon: translateStatus ? <Pause /> : <Attendees />,
+    onClick: (event) => setTranslateStatus(!translateStatus),
     label: 'Transcribe',
   };
 
@@ -214,11 +252,13 @@ const App = () => {
           <SpaceBetween direction='vertical' size='l'>
             <Container
               header={<Header variant='h2'>Amazon Chime SDK Meeting</Header>}
+              actions={<Button onClick={signOut}>Sign out</Button>}
             >
               <div style={{ height: '600px', width: '720px' }}>
                 <VideoTileGrid />
               </div>
             </Container>
+
             <ControlBar
               showLabels={true}
               responsive={true}
@@ -233,12 +273,14 @@ const App = () => {
                 type='text'
                 style={{ marginLeft: '20px', marginRight: '20px' }}
               />
+
               {!audioVideo && <ControlBarButton {...JoinButtonProps} />}
               {audioVideo && (
                 <>
                   <ControlBarButton {...LeaveButtonProps} />
                   <ControlBarButton {...EndButtonProps} />
                   <ControlBarButton {...TranscribeButtonProps} />
+                  <ControlBarButton {...TranslateButtonProps} />
                   <AudioInputControl />
                   <AudioOutputControl />
                   <VideoInputControl />

@@ -48,5 +48,12 @@ export type AmplifyDependentResourcesAttributes = {
             "CloudFrontSecureURL": "string",
             "CloudFrontOriginAccessIdentity": "string"
         }
+    },
+    "predictions": {
+        "translateText112eae37": {
+            "region": "string",
+            "sourceLang": "string",
+            "targetLang": "string"
+        }
     }
 }
