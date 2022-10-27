@@ -16,6 +16,9 @@ root.render(
       <MeetingProvider>
         <App />
       </MeetingProvider>
+      <MeetingProvider>
+        <App />
+      </MeetingProvider>
     </ThemeProvider>
   </React.StrictMode>,
 );
