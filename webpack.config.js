@@ -4,13 +4,13 @@ var HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
   entry: ['regenerator-runtime/runtime.js', './src/index.js'],
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'build'),
     filename: 'index_bundle.js',
   },
   performance: {
     hints: false,
-    maxEntrypointSize: 512000,
-    maxAssetSize: 512000,
+    maxEntrypointSize: 5120000,
+    maxAssetSize: 5120000,
   },
   devServer: {
     static: {
