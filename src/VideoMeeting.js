@@ -21,15 +21,8 @@ import {
   MeetingStatus,
   useMeetingStatus,
 } from 'amazon-chime-sdk-component-library-react';
-import {
-  Container,
-  ContentLayout,
-  Header,
-  SpaceBetween,
-  Button,
-} from '@cloudscape-design/components';
+import { Container, Header, SpaceBetween } from '@cloudscape-design/components';
 import { Amplify, API, Auth } from 'aws-amplify';
-import { Authenticator } from '@aws-amplify/ui-react';
 import Predictions, {
   AmazonAIPredictionsProvider,
 } from '@aws-amplify/predictions';
@@ -54,9 +47,7 @@ const languages = [
   { language: 'Spanish (Mexico)', code: 'es-MX' },
 ];
 
-const App = () => {
-  const [currentCredentials, setCurrentCredentials] = useState({});
-  const [currentSession, setCurrentSession] = useState({});
+const VideoMeeting = () => {
   const meetingManager = useMeetingManager();
   const meetingStatus = useMeetingStatus();
   const [meetingId, setMeetingId] = useState('');
@@ -69,16 +60,6 @@ const App = () => {
   const audioVideo = useAudioVideo();
 
   const { toggleVideo } = useLocalVideo();
-
-  useEffect(() => {
-    async function getAuth() {
-      setCurrentSession(await Auth.currentSession());
-      setCurrentCredentials(await Auth.currentUserCredentials());
-      console.log(`authState: ${JSON.stringify(currentSession)}`);
-      console.log(`currentCredentials: ${JSON.stringify(currentCredentials)}`);
-    }
-    getAuth();
-  }, []);
 
   useEffect(() => {
     async function tog() {
@@ -260,84 +241,60 @@ const App = () => {
   };
 
   return (
-    <Authenticator loginMechanisms={['email']}>
-      {({ signOut, user }) => (
-        <ContentLayout
-          header={
-            <SpaceBetween size='m'>
-              <Header
-                className='ContentHeader'
-                variant='h2'
-                actions={
-                  <Button variant='primary' onClick={signOut}>
-                    Sign out
-                  </Button>
-                }
-              >
-                Amazon Chime SDK Meeting
-              </Header>
-            </SpaceBetween>
+    <SpaceBetween direction='horizontal' size='xs'>
+      <SpaceBetween direction='vertical' size='l'>
+        <Container
+          className='MeetingContainer'
+          footer={
+            <ControlBar
+              showLabels={true}
+              responsive={true}
+              layout='undocked-horizontal'
+            >
+              <Input
+                showClear={true}
+                onChange={(e) => setRequestId(e.target.value)}
+                sizing={'md'}
+                value={requestId}
+                placeholder='Request ID'
+                type='text'
+              />
+
+              {!audioVideo && <ControlBarButton {...JoinButtonProps} />}
+              {audioVideo && (
+                <>
+                  <ControlBarButton {...LeaveButtonProps} />
+                  <ControlBarButton {...EndButtonProps} />
+                  <ControlBarButton {...TranscribeButtonProps} />
+                  <ControlBarButton {...TranslateButtonProps} />
+                  <AudioInputControl />
+                  <AudioOutputControl />
+                  <VideoInputControl />
+                </>
+              )}
+            </ControlBar>
           }
         >
-          <SpaceBetween direction='horizontal' size='xs'>
-            <SpaceBetween direction='vertical' size='l'>
-              <Container
-                className='MeetingContainer'
-                footer={
-                  <ControlBar
-                    showLabels={true}
-                    responsive={true}
-                    layout='undocked-horizontal'
-                  >
-                    <Input
-                      showClear={true}
-                      onChange={(e) => setRequestId(e.target.value)}
-                      sizing={'md'}
-                      value={requestId}
-                      placeholder='Request ID'
-                      type='text'
-                    />
+          <div style={{ height: '600px', width: '720px' }}>
+            <VideoTileGrid />
+          </div>
+        </Container>
+      </SpaceBetween>
 
-                    {!audioVideo && <ControlBarButton {...JoinButtonProps} />}
-                    {audioVideo && (
-                      <>
-                        <ControlBarButton {...LeaveButtonProps} />
-                        <ControlBarButton {...EndButtonProps} />
-                        <ControlBarButton {...TranscribeButtonProps} />
-                        <ControlBarButton {...TranslateButtonProps} />
-                        <AudioInputControl />
-                        <AudioOutputControl />
-                        <VideoInputControl />
-                      </>
-                    )}
-                  </ControlBar>
-                }
-              >
-                <div style={{ height: '600px', width: '720px' }}>
-                  <VideoTileGrid />
-                </div>
-              </Container>
-            </SpaceBetween>
-
-            <Container header={<Header variant='h2'>Transcription</Header>}>
-              <SpaceBetween size='xs'>
-                <div style={{ height: '663px', width: '240px' }}>
-                  {lines
-                    .slice(Math.max(lines.length - 10, 0))
-                    .map((line, index) => (
-                      <div key={index}>
-                        {line}
-                        <br />
-                      </div>
-                    ))}
-                </div>
-              </SpaceBetween>
-            </Container>
-          </SpaceBetween>
-        </ContentLayout>
-      )}
-    </Authenticator>
+      <Container header={<Header variant='h2'>Transcription</Header>}>
+        <SpaceBetween size='xs'>
+          <div style={{ height: '663px', width: '240px' }}>
+            {lines.slice(Math.max(lines.length - 10, 0)).map((line, index) => (
+              <div key={index}>
+                {line}
+                <br />
+              </div>
+            ))}
+          </div>
+        </SpaceBetween>
+      </Container>
+    </SpaceBetween>
   );
 };
 
-export default App;
+export default VideoMeeting;
