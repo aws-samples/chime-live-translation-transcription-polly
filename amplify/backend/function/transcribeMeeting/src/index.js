@@ -27,7 +27,9 @@ export async function handler(event) {
     switch (body.action) {
       case true:
         console.log(`Starting Transcription for ${body.meetingId}`);
-        if (await startMeetingTranscription(body.meetingId)) {
+        if (
+          await startMeetingTranscription(body.meetingId, body.sourceLanguage)
+        ) {
           response.body = JSON.stringify('Transcription started');
           response.statusCode = 200;
           return response;
@@ -54,16 +56,14 @@ export async function handler(event) {
   }
 }
 
-async function startMeetingTranscription(meetingId) {
+async function startMeetingTranscription(meetingId, sourceLanguage) {
   try {
     const transcribeResponse = await chimeSdkMeetingsClient.send(
       new StartMeetingTranscriptionCommand({
         MeetingId: meetingId,
         TranscriptionConfiguration: {
           EngineTranscribeSettings: {
-            IdentifyLanguage: true,
-            LanguageOptions:
-              'en-US,es-US,fr-CA,it-IT,de-DE,pt-BR,ja-JP,ko-KR,zh-CN',
+            LanguageCode: sourceLanguage,
           },
         },
       }),
