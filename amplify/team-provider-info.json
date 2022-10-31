@@ -15,7 +15,7 @@
       "function": {
         "createMeeting": {
           "deploymentBucketName": "amplify-biz307amplify-dev-135947-deployment",
-          "s3Key": "amplify-builds/createMeeting-59742b2f506f76534764-build.zip"
+          "s3Key": "amplify-builds/createMeeting-79766772537670634c46-build.zip"
         },
         "endMeeting": {
           "deploymentBucketName": "amplify-biz307amplify-dev-135947-deployment",

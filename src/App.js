@@ -10,10 +10,7 @@ import TranscriptionMeeting from './TranscriptionMeeting';
 import Transcription from './Transcription';
 import MeetingControlBar from './MeetingControlBar';
 import awsExports from './aws-exports';
-import {
-  Meeting,
-  MeetingProvider,
-} from 'amazon-chime-sdk-component-library-react';
+import { MeetingProvider } from 'amazon-chime-sdk-component-library-react';
 
 import {
   ContentLayout,
@@ -63,67 +60,80 @@ const App = () => {
   return (
     <Authenticator loginMechanisms={['email']}>
       {({ signOut, user }) => (
-        <MeetingProvider>
-          <ContentLayout
-            header={
-              <SpaceBetween size='m'>
-                <Header
-                  className='ContentHeader'
-                  variant='h2'
-                  actions={
-                    <Button variant='primary' onClick={signOut}>
-                      Sign out
-                    </Button>
-                  }
-                >
-                  Amazon Chime SDK Meeting
-                </Header>
-              </SpaceBetween>
-            }
-          >
-            <SpaceBetween direction='horizontal' size='xs'>
-              <SpaceBetween direction='vertical' size='l'>
-                <Container
-                  className='MeetingContainer'
-                  footer={
-                    <MeetingControlBar
-                      transcribeStatus={transcribeStatus}
-                      setTranscribeStatus={setTranscribeStatus}
-                      translateStatus={translateStatus}
-                      setTranslateStatus={setTranslateStatus}
-                      sourceLanguages={sourceLanguages}
-                      targetLanguage={targetLanguage}
-                      sourceLanguage={sourceLanguage}
-                      setSourceLanguage={setSourceLanguage}
-                      setTranscripts={setTranscripts}
+        <>
+          <MeetingProvider>
+            <ContentLayout
+              header={
+                <SpaceBetween size='m'>
+                  <Header
+                    className='ContentHeader'
+                    variant='h2'
+                    actions={
+                      <Button variant='primary' onClick={signOut}>
+                        Sign out
+                      </Button>
+                    }
+                  >
+                    Amazon Chime SDK Meeting
+                  </Header>
+                </SpaceBetween>
+              }
+            >
+              <SpaceBetween direction='horizontal' size='xs'>
+                <SpaceBetween direction='vertical' size='l'>
+                  <Container
+                    className='MeetingContainer'
+                    footer={
+                      <MeetingControlBar
+                        transcribeStatus={transcribeStatus}
+                        setTranscribeStatus={setTranscribeStatus}
+                        translateStatus={translateStatus}
+                        setTranslateStatus={setTranslateStatus}
+                        sourceLanguages={sourceLanguages}
+                        targetLanguage={targetLanguage}
+                        sourceLanguage={sourceLanguage}
+                        setSourceLanguage={setSourceLanguage}
+                        setTranscripts={setTranscripts}
+                        setLine={setLine}
+                      />
+                    }
+                  >
+                    <VideoMeeting
                       setLine={setLine}
+                      setTranscribeStatus={setTranscribeStatus}
+                      setTranslateStatus={setTranslateStatus}
                     />
-                  }
-                >
-                  <VideoMeeting
-                    setLine={setLine}
-                    setTranscribeStatus={setTranscribeStatus}
-                    setTranslateStatus={setTranslateStatus}
-                  />
-                </Container>
+                  </Container>
+                </SpaceBetween>
+                <Transcription
+                  transcribeStatus={transcribeStatus}
+                  setTranscribeStatus={setTranscribeStatus}
+                  translateStatus={translateStatus}
+                  setTranslateStatus={setTranslateStatus}
+                  sourceLanguages={sourceLanguages}
+                  targetLanguage={sourceLanguage}
+                  sourceLanguage={sourceLanguage}
+                  setSourceLanguage={setSourceLanguage}
+                  setTranscripts={setTranscripts}
+                  setLine={setLine}
+                  transcripts={transcripts}
+                  lines={lines}
+                ></Transcription>
               </SpaceBetween>
-              <Transcription
-                transcribeStatus={transcribeStatus}
-                setTranscribeStatus={setTranscribeStatus}
-                translateStatus={translateStatus}
-                setTranslateStatus={setTranslateStatus}
-                sourceLanguages={sourceLanguages}
-                targetLanguage={targetLanguage}
-                sourceLanguage={sourceLanguage}
-                setSourceLanguage={setSourceLanguage}
-                setTranscripts={setTranscripts}
-                setLine={setLine}
-                transcripts={transcripts}
-                lines={lines}
-              ></Transcription>
-            </SpaceBetween>
-          </ContentLayout>
-        </MeetingProvider>
+            </ContentLayout>
+          </MeetingProvider>
+
+          <MeetingProvider>
+            <TranscriptionMeeting
+              transcribeStatus={transcribeStatus}
+              sourceLanguage={sourceLanguage}
+              setTranscripts={setTranscripts}
+              setLine={setLine}
+              transcripts={transcripts}
+              lines={lines}
+            />
+          </MeetingProvider>
+        </>
       )}
     </Authenticator>
   );

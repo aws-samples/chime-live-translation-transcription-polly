@@ -122,13 +122,13 @@ const MeetingControlBar = ({
   const handleTranscribe = async (event) => {
     event.preventDefault();
     try {
-      const transcribeResponse = await API.post('meetingApi', '/transcribe', {
-        body: {
-          action: !transcribeStatus,
-          meetingId: meetingId,
-          sourceLanguage: sourceLanguage || 'en-US',
-        },
-      });
+      // const transcribeResponse = await API.post('meetingApi', '/transcribe', {
+      //   body: {
+      //     action: !transcribeStatus,
+      //     meetingId: meetingId,
+      //     sourceLanguage: sourceLanguage || 'en-US',
+      //   },
+      // });
       setTranscribeStatus(!transcribeStatus);
       console.log(`Sending message: ${JSON.stringify(!transcribeStatus)}`);
       audioVideo.realtimeSendDataMessage(
@@ -136,9 +136,9 @@ const MeetingControlBar = ({
         { message: !transcribeStatus },
         30000,
       );
-      console.log(`transcribeResponse: ${transcribeResponse}`);
+      // console.log(`transcribeResponse: ${transcribeResponse}`);
     } catch (err) {
-      console.log(`err in handleTranscribe: ${err}`);
+      console.log(`err in handleTranscribe - MeetingControlBar: ${err}`);
     }
   };
 

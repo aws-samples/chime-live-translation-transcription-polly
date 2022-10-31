@@ -26,11 +26,17 @@ export async function handler(event) {
   const body = JSON.parse(event.body);
   const requestId = body.requestId;
   const name = body.name;
+  const attendeeCapabilities = body.attendeeCapabilities || {
+    Audio: 'SendReceive',
+    Content: 'SendReceive',
+    Video: 'SendReceive',
+  };
   const meetingInfo = await createMeeting(requestId || randomUUID());
   if (meetingInfo) {
     const attendeeInfo = await createAttendee(
       meetingInfo.Meeting.MeetingId,
       name,
+      attendeeCapabilities,
     );
     if (attendeeInfo) {
       const responseInfo = {
@@ -72,12 +78,13 @@ async function createMeeting(requestId) {
   }
 }
 
-async function createAttendee(meetingId, name) {
+async function createAttendee(meetingId, name, attendeeCapabilities) {
   console.log(`Creating Attendee for Meeting: ${meetingId}`);
   try {
     const attendeeInfo = await chimeSdkMeetingsClient.send(
       new CreateAttendeeCommand({
         MeetingId: meetingId,
+        Capabilities: attendeeCapabilities,
         ExternalUserId: name,
       }),
     );

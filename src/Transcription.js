@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
-import { useAudioVideo } from 'amazon-chime-sdk-component-library-react';
 import { Container, Header, SpaceBetween } from '@cloudscape-design/components';
-import { Amplify, API, Auth } from 'aws-amplify';
+import { Amplify } from 'aws-amplify';
 import Predictions, {
   AmazonAIPredictionsProvider,
 } from '@aws-amplify/predictions';
+
+import { useAudioVideo } from 'amazon-chime-sdk-component-library-react';
 
 import '@aws-amplify/ui-react/styles.css';
 import '@cloudscape-design/global-styles/index.css';
@@ -15,68 +16,35 @@ Amplify.configure(awsExports);
 Amplify.addPluggable(new AmazonAIPredictionsProvider());
 
 const Transcription = ({
-  transcribeStatus,
-  setTranscribeStatus,
-  setSourceLanguage,
-  sourceLanguages,
-  sourceLanguage,
   targetLanguage,
   translateStatus,
-  setTranslateStatus,
-  setTranscripts,
   setLine,
+  setTranscripts,
   transcripts,
   lines,
 }) => {
-  const [currentCredentials, setCurrentCredentials] = useState({});
-  const [currentSession, setCurrentSession] = useState({});
-
   const audioVideo = useAudioVideo();
-
-  useEffect(() => {
-    async function getAuth() {
-      setCurrentSession(await Auth.currentSession());
-      setCurrentCredentials(await Auth.currentUserCredentials());
-      console.log(`authState: ${JSON.stringify(currentSession)}`);
-      console.log(`currentCredentials: ${JSON.stringify(currentCredentials)}`);
-    }
-    getAuth();
-  }, []);
-
-  useEffect(() => {
-    if (!audioVideo) {
-      console.log('No audioVideo');
-      return;
-    }
-    console.log('Audio Video found');
-    audioVideo.realtimeSubscribeToReceiveDataMessage('transcribe', (data) => {
-      console.log(`realtimeData: ${JSON.stringify(data)}`);
-      const receivedData = (data && data.json()) || {};
-      const { message } = receivedData;
-      console.log(`incomingTranscribeStatus: ${message}`);
-      setTranscribeStatus(message);
-    });
-
-    return () => {
-      audioVideo.realtimeUnsubscribeFromReceiveDataMessage('Message');
-    };
-  }, [audioVideo]);
+  const [incomingTranscripts, setIncomingTranscripts] = useState([]);
 
   useEffect(() => {
     console.log(transcripts);
     async function transcribeText() {
       if (transcripts) {
-        if (transcripts.results !== undefined) {
-          if (!transcripts.results[0].isPartial) {
+        if (transcripts.transcriptEvent.results !== undefined) {
+          if (!transcripts.transcriptEvent.results[0].isPartial) {
             if (
-              transcripts.results[0].alternatives[0].items[0].confidence > 0.5
+              transcripts.transcriptEvent.results[0].alternatives[0].items[0]
+                .confidence > 0.5
             ) {
-              if (translateStatus) {
+              console.log(`sourceLanguage: ${transcripts.sourceLanguage}`);
+              console.log(`targetLanguage: ${targetLanguage}`);
+              if (transcripts.sourceLanguage != targetLanguage) {
                 var translateResult = await Predictions.convert({
                   translateText: {
                     source: {
-                      text: transcripts.results[0].alternatives[0].transcript,
-                      language: transcripts.results[0].languageCode,
+                      text: transcripts.transcriptEvent.results[0]
+                        .alternatives[0].transcript,
+                      language: transcripts.sourceLanguage,
                     },
                     targetLanguage: targetLanguage,
                   },
@@ -86,12 +54,12 @@ const Transcription = ({
                 );
                 setLine((lines) => [
                   ...lines,
-                  `${transcripts.results[0].alternatives[0].items[0].attendee.externalUserId}: ${translateResult.text}`,
+                  `${transcript.attendeeName}: ${translateResult.text}`,
                 ]);
               } else {
                 setLine((lines) => [
                   ...lines,
-                  `${transcripts.results[0].alternatives[0].items[0].attendee.externalUserId}: ${transcripts.results[0].alternatives[0].transcript}`,
+                  `${transcripts.attendeeName}: ${transcripts.transcriptEvent.results[0].alternatives[0].transcript}`,
                 ]);
               }
             }
@@ -103,16 +71,90 @@ const Transcription = ({
   }, [transcripts]);
 
   useEffect(() => {
-    console.log(`transcribeStatus: ${transcribeStatus}`);
-    if (transcribeStatus) {
-      console.log('Subscribing to transcribe');
-      audioVideo.transcriptionController.subscribeToTranscriptEvent(
-        (transcriptEvent) => {
-          setTranscripts(transcriptEvent);
-        },
+    console.log(incomingTranscripts);
+    async function transcribeText() {
+      if (incomingTranscripts) {
+        if (incomingTranscripts.transcriptEvent.results !== undefined) {
+          if (!incomingTranscripts.transcriptEvent.results[0].isPartial) {
+            if (
+              incomingTranscripts.transcriptEvent.results[0].alternatives[0]
+                .items[0].confidence > 0.5
+            ) {
+              console.log(
+                `sourceLanguage: ${incomingTranscripts.sourceLanguage}`,
+              );
+              console.log(`targetLanguage: ${targetLanguage}`);
+              if (incomingTranscripts.sourceLanguage != targetLanguage) {
+                var translateResult = await Predictions.convert({
+                  translateText: {
+                    source: {
+                      text: incomingTranscripts.transcriptEvent.results[0]
+                        .alternatives[0].transcript,
+                      language: incomingTranscripts.sourceLanguage,
+                    },
+                    targetLanguage: targetLanguage,
+                  },
+                });
+                console.log(
+                  `translateResult: ${JSON.stringify(translateResult.text)}`,
+                );
+                setLine((lines) => [
+                  ...lines,
+                  `${transcripts.attendeeName}: ${translateResult.text}`,
+                ]);
+              } else {
+                setLine((lines) => [
+                  ...lines,
+                  `${incomingTranscripts.attendeeName}: ${incomingTranscripts.transcriptEvent.results[0].alternatives[0].transcript}`,
+                ]);
+              }
+            }
+          }
+        }
+      }
+    }
+    transcribeText();
+  }, [incomingTranscripts]);
+
+  useEffect(() => {
+    if (!audioVideo) {
+      console.log('No audioVideo');
+      return;
+    }
+    if (
+      transcripts.transcriptEvent.results !== undefined &&
+      !transcripts.transcriptEvent.results[0].isPartial
+    ) {
+      console.log(`Sending transcriptEvent: ${JSON.stringify(transcripts)}`);
+      audioVideo.realtimeSendDataMessage(
+        'transcriptEvent',
+        { message: transcripts },
+        30000,
       );
     }
-  }, [transcribeStatus]);
+  }, [transcripts]);
+
+  useEffect(() => {
+    if (!audioVideo) {
+      console.log('No audioVideo');
+      return;
+    }
+    console.log('Audio Video found');
+    audioVideo.realtimeSubscribeToReceiveDataMessage(
+      'transcriptEvent',
+      (data) => {
+        console.log(`realtimeData: ${JSON.stringify(data)}`);
+        const receivedData = (data && data.json()) || {};
+        const { message } = receivedData;
+        console.log(`incomingTranscriptEvent: ${message}`);
+        setIncomingTranscripts(message);
+      },
+    );
+
+    return () => {
+      audioVideo.realtimeUnsubscribeFromReceiveDataMessage('Message');
+    };
+  }, [audioVideo]);
 
   return (
     <Container header={<Header variant='h2'>Transcription</Header>}>
