@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import {
   useMeetingManager,
-  useLocalVideo,
+  MeetingStatus,
+  useToggleLocalMute,
   useAudioVideo,
   DeviceLabels,
   VideoTileGrid,
@@ -20,40 +21,33 @@ Amplify.configure(awsExports);
 
 const TranscriptionMeeting = ({
   transcribeStatus,
-  sourceLanguage = 'en-US',
-  transcripts,
+  sourceLanguage,
   setTranscripts,
-  lines,
-  setLine,
+  localMute,
 }) => {
   const [currentCredentials, setCurrentCredentials] = useState({});
   const [currentSession, setCurrentSession] = useState({});
   const meetingManager = useMeetingManager();
-  const meetingStatus = useMeetingStatus();
   const [transcribeMeetingId, setTranscribeMeetingId] = useState('');
-  const [requestId, setRequestId] = useState('');
-  // const [transcripts, setTranscripts] = useState([]);
-  // const [lines, setLine] = useState([]);
-  const [translateStatus, setTranslateStatus] = useState(false);
-  const [targetLanguage, setTargetLanguage] = useState('');
-  // const [sourceLanguage, setSourceLanguage] = useState('');
   const [attendeeName, setAttendeeName] = useState('');
   const audioVideo = useAudioVideo();
-
-  const { toggleVideo } = useLocalVideo();
+  const { muted, toggleMute } = useToggleLocalMute();
+  const meetingStatus = useMeetingStatus();
 
   useEffect(() => {
     async function getAuth() {
       setCurrentSession(await Auth.currentSession());
       setCurrentCredentials(await Auth.currentUserCredentials());
-      console.log(`authState: ${JSON.stringify(currentSession)}`);
-      console.log(`currentCredentials: ${JSON.stringify(currentCredentials)}`);
     }
     getAuth();
   }, []);
 
   useEffect(() => {
-    console.log(`transcribeMeeting useEffect: ${transcribeStatus}`);
+    toggleMute();
+  }, [localMute]);
+
+  useEffect(() => {
+    console.log(`transcribeMeeting transcribeStatus: ${transcribeStatus}`);
     async function joinMeeting() {
       const email = (await Auth.currentUserInfo()).attributes.email;
       const name = (await Auth.currentUserInfo()).attributes.name;
@@ -63,7 +57,7 @@ const TranscriptionMeeting = ({
           body: {
             name: name,
             email: email,
-            requestId: requestId,
+            requestId: '',
             attendeeCapabilities: {
               Audio: 'Send',
               Content: 'None',
@@ -93,7 +87,7 @@ const TranscriptionMeeting = ({
             sourceLanguage: sourceLanguage || 'en-US',
           },
         });
-        console.log(transcribeResponse);
+        console.log(`transcribeResponse: ${transcribeResponse}`);
       } catch (err) {
         console.log(err);
       }
@@ -111,66 +105,33 @@ const TranscriptionMeeting = ({
 
     if (transcribeStatus) {
       joinMeeting();
-    } else {
+    } else if (meetingStatus === MeetingStatus.Succeeded) {
       endMeeting();
     }
   }, [transcribeStatus]);
 
   useEffect(() => {
-    async function subscribeToTranscribe() {
-      console.log('Subscribing to transcribe');
-      audioVideo.transcriptionController.subscribeToTranscriptEvent(
-        (transcriptEvent) => {
-          setTranscripts({
-            sourceLanguage: sourceLanguage,
-            attendeeName: attendeeName,
-            transcriptEvent: transcriptEvent,
-          });
-        },
-      );
+    if (!audioVideo) {
+      console.log('No audioVideo - transcribe');
+      return;
     }
-    if (audioVideo) subscribeToTranscribe();
-  }, [audioVideo]);
+    console.log('Audio Video found');
 
-  // useEffect(() => {
-  //   console.log(transcripts);
-  //   async function transcribeText() {
-  //     if (transcripts) {
-  //       if (transcripts.results !== undefined) {
-  //         if (!transcripts.results[0].isPartial) {
-  //           if (
-  //             transcripts.results[0].alternatives[0].items[0].confidence > 0.5
-  //           ) {
-  //             if (translateStatus) {
-  //               var translateResult = await Predictions.convert({
-  //                 translateText: {
-  //                   source: {
-  //                     text: transcripts.results[0].alternatives[0].transcript,
-  //                     language: transcripts.results[0].languageCode,
-  //                   },
-  //                   targetLanguage: targetLanguage,
-  //                 },
-  //               });
-  //               console.log(
-  //                 `translateResult: ${JSON.stringify(translateResult.text)}`,
-  //               );
-  //               setLine((lines) => [
-  //                 ...lines,
-  //                 `${transcripts.results[0].alternatives[0].items[0].attendee.externalUserId}: ${translateResult.text}`,
-  //               ]);
-  //             } else {
-  //               setLine((lines) => [
-  //                 ...lines,
-  //                 `${transcripts.results[0].alternatives[0].items[0].attendee.externalUserId}: ${transcripts.results[0].alternatives[0].transcript}`,
-  //               ]);
-  //             }
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }
-  //   transcribeText();
-  // }, [transcripts]);
+    console.log('Subscribing to transcribe');
+    audioVideo.transcriptionController.subscribeToTranscriptEvent(
+      (transcriptEvent) => {
+        setTranscripts({
+          sourceLanguage: sourceLanguage,
+          attendeeName: attendeeName,
+          transcriptEvent: transcriptEvent,
+        });
+      },
+    );
+
+    return () => {
+      audioVideo.transcriptionController.unsubscribeFromTranscriptEvent();
+    };
+  }, [audioVideo]);
 
   return (
     <SpaceBetween direction='horizontal' size='xs'>

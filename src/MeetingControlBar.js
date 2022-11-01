@@ -3,8 +3,7 @@ import './App.css';
 import {
   useAudioVideo,
   useMeetingManager,
-  useMeetingStatus,
-  useLocalVideo,
+  useToggleLocalMute,
   ControlBar,
   ControlBarButton,
   Meeting,
@@ -13,17 +12,13 @@ import {
   Input,
   Attendees,
   DeviceLabels,
-  VideoTileGrid,
   Record,
   Pause,
   Remove,
   VideoInputControl,
   AudioOutputControl,
-  MeetingStatus,
 } from 'amazon-chime-sdk-component-library-react';
-import { Container, Header, SpaceBetween } from '@cloudscape-design/components';
 import { Amplify, API, Auth } from 'aws-amplify';
-
 import '@aws-amplify/ui-react/styles.css';
 import '@cloudscape-design/global-styles/index.css';
 import { MeetingSessionConfiguration } from 'amazon-chime-sdk-js';
@@ -36,14 +31,19 @@ const MeetingControlBar = ({
   setTranscribeStatus,
   setSourceLanguage,
   sourceLanguages,
-  sourceLanguage,
   translateStatus,
   setTranslateStatus,
+  setLocalMute,
 }) => {
   const [meetingId, setMeetingId] = useState('');
   const [requestId, setRequestId] = useState('');
   const audioVideo = useAudioVideo();
   const meetingManager = useMeetingManager();
+  const { muted, toggleMute } = useToggleLocalMute();
+
+  useEffect(() => {
+    setLocalMute(muted);
+  }, [toggleMute]);
 
   const JoinButtonProps = {
     icon: <Meeting />,
@@ -71,12 +71,6 @@ const MeetingControlBar = ({
     })),
     onClick: (event) => handleTranscribe(event),
     label: 'Transcribe',
-  };
-
-  const TranslateButtonProps = {
-    icon: translateStatus ? <Pause /> : <Attendees />,
-    onClick: (event) => setTranslateStatus(!translateStatus),
-    label: 'Translate',
   };
 
   const handleLeave = async (event) => {
@@ -121,25 +115,7 @@ const MeetingControlBar = ({
 
   const handleTranscribe = async (event) => {
     event.preventDefault();
-    try {
-      // const transcribeResponse = await API.post('meetingApi', '/transcribe', {
-      //   body: {
-      //     action: !transcribeStatus,
-      //     meetingId: meetingId,
-      //     sourceLanguage: sourceLanguage || 'en-US',
-      //   },
-      // });
-      setTranscribeStatus(!transcribeStatus);
-      console.log(`Sending message: ${JSON.stringify(!transcribeStatus)}`);
-      audioVideo.realtimeSendDataMessage(
-        'transcribe',
-        { message: !transcribeStatus },
-        30000,
-      );
-      // console.log(`transcribeResponse: ${transcribeResponse}`);
-    } catch (err) {
-      console.log(`err in handleTranscribe - MeetingControlBar: ${err}`);
-    }
+    setTranscribeStatus(!transcribeStatus);
   };
 
   return (
@@ -163,7 +139,6 @@ const MeetingControlBar = ({
           <ControlBarButton {...LeaveButtonProps} />
           <ControlBarButton {...EndButtonProps} />
           <ControlBarButton {...TranscribeButtonProps} />
-          <ControlBarButton {...TranslateButtonProps} />
           <AudioInputControl />
           <AudioOutputControl />
           <VideoInputControl />

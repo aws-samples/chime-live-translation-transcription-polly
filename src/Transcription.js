@@ -5,9 +5,7 @@ import { Amplify } from 'aws-amplify';
 import Predictions, {
   AmazonAIPredictionsProvider,
 } from '@aws-amplify/predictions';
-
 import { useAudioVideo } from 'amazon-chime-sdk-component-library-react';
-
 import '@aws-amplify/ui-react/styles.css';
 import '@cloudscape-design/global-styles/index.css';
 
@@ -15,21 +13,14 @@ import awsExports from './aws-exports';
 Amplify.configure(awsExports);
 Amplify.addPluggable(new AmazonAIPredictionsProvider());
 
-const Transcription = ({
-  targetLanguage,
-  translateStatus,
-  setLine,
-  setTranscripts,
-  transcripts,
-  lines,
-}) => {
+const Transcription = ({ targetLanguage, setLine, transcripts, lines }) => {
   const audioVideo = useAudioVideo();
   const [incomingTranscripts, setIncomingTranscripts] = useState([]);
 
   useEffect(() => {
-    console.log(transcripts);
     async function transcribeText() {
-      if (transcripts) {
+      console.log(`transcripts: ${transcripts}`);
+      if (transcripts.transcriptEvent) {
         if (transcripts.transcriptEvent.results !== undefined) {
           if (!transcripts.transcriptEvent.results[0].isPartial) {
             if (
@@ -71,9 +62,9 @@ const Transcription = ({
   }, [transcripts]);
 
   useEffect(() => {
-    console.log(incomingTranscripts);
     async function transcribeText() {
-      if (incomingTranscripts) {
+      console.log(`incomingTranscripts: ${incomingTranscripts}`);
+      if (incomingTranscripts.transcriptEvent) {
         if (incomingTranscripts.transcriptEvent.results !== undefined) {
           if (!incomingTranscripts.transcriptEvent.results[0].isPartial) {
             if (
@@ -121,16 +112,19 @@ const Transcription = ({
       console.log('No audioVideo');
       return;
     }
-    if (
-      transcripts.transcriptEvent.results !== undefined &&
-      !transcripts.transcriptEvent.results[0].isPartial
-    ) {
-      console.log(`Sending transcriptEvent: ${JSON.stringify(transcripts)}`);
-      audioVideo.realtimeSendDataMessage(
-        'transcriptEvent',
-        { message: transcripts },
-        30000,
-      );
+    if (transcripts) {
+      if (transcripts.transcriptEvent.results !== undefined) {
+        if (!transcripts.transcriptEvent.results[0].isPartial) {
+          console.log(
+            `Sending transcriptEvent: ${JSON.stringify(transcripts)}`,
+          );
+          audioVideo.realtimeSendDataMessage(
+            'transcriptEvent',
+            { message: transcripts },
+            30000,
+          );
+        }
+      }
     }
   }, [transcripts]);
 

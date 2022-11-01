@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import { Amplify, Auth } from 'aws-amplify';
-import { Authenticator } from '@aws-amplify/ui-react';
+import { Authenticator, SelectField } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 import '@cloudscape-design/global-styles/index.css';
-
 import VideoMeeting from './VideoMeeting';
 import TranscriptionMeeting from './TranscriptionMeeting';
 import Transcription from './Transcription';
@@ -44,8 +43,9 @@ const App = () => {
   const [lines, setLine] = useState([]);
   const [transcribeStatus, setTranscribeStatus] = useState(false);
   const [translateStatus, setTranslateStatus] = useState(false);
-  const [targetLanguage, setTargetLanguage] = useState('');
+  const [targetLanguage, setTargetLanguage] = useState('en-US');
   const [sourceLanguage, setSourceLanguage] = useState('');
+  const [localMute, setLocalMute] = useState(false);
 
   useEffect(() => {
     async function getAuth() {
@@ -57,8 +57,27 @@ const App = () => {
     getAuth();
   }, []);
 
+  const formFields = {
+    signUp: {
+      email: {
+        order: 1,
+        isRequired: true,
+      },
+      name: {
+        order: 2,
+        isRequired: true,
+      },
+      password: {
+        order: 3,
+      },
+      confirm_password: {
+        order: 4,
+      },
+    },
+  };
+
   return (
-    <Authenticator loginMechanisms={['email']}>
+    <Authenticator loginMechanisms={['email']} formFields={formFields}>
       {({ signOut, user }) => (
         <>
           <MeetingProvider>
@@ -95,6 +114,8 @@ const App = () => {
                         setSourceLanguage={setSourceLanguage}
                         setTranscripts={setTranscripts}
                         setLine={setLine}
+                        localMute={localMute}
+                        setLocalMute={setLocalMute}
                       />
                     }
                   >
@@ -131,6 +152,7 @@ const App = () => {
               setLine={setLine}
               transcripts={transcripts}
               lines={lines}
+              localMute={localMute}
             />
           </MeetingProvider>
         </>
