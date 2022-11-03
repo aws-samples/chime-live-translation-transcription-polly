@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
+import { Amplify, Auth } from 'aws-amplify';
+import '@aws-amplify/ui-react/styles.css';
 import {
   useMeetingManager,
   MeetingStatus,
@@ -9,139 +11,98 @@ import {
   VideoTileGrid,
   useMeetingStatus,
 } from 'amazon-chime-sdk-component-library-react';
-import { SpaceBetween } from '@cloudscape-design/components';
-import { Amplify, API, Auth } from 'aws-amplify';
-
-import '@aws-amplify/ui-react/styles.css';
+import {
+  ContentLayout,
+  Container,
+  Header,
+  SpaceBetween,
+  Button,
+} from '@cloudscape-design/components';
 import '@cloudscape-design/global-styles/index.css';
-import { MeetingSessionConfiguration } from 'amazon-chime-sdk-js';
-
+import * as TranscribeClient from './TranscribeClient';
 import awsExports from './aws-exports';
 Amplify.configure(awsExports);
 
-const TranscriptionMeeting = ({
-  transcribeStatus,
-  sourceLanguage,
-  setTranscripts,
-  localMute,
-}) => {
-  const [currentCredentials, setCurrentCredentials] = useState({});
-  const [currentSession, setCurrentSession] = useState({});
-  const meetingManager = useMeetingManager();
-  const [transcribeMeetingId, setTranscribeMeetingId] = useState('');
-  const [attendeeName, setAttendeeName] = useState('');
+export function TranscriptionComponent(props) {
   const audioVideo = useAudioVideo();
-  const { muted, toggleMute } = useToggleLocalMute();
-  const meetingStatus = useMeetingStatus();
+  const {
+    selectedLanguage,
+    transcribeStatus,
+    sourceLanguage,
+    handleInputLanguageList,
+    microphoneStream,
+    transcriptionClient,
+    userCredentials,
+    currentSession,
+    currentCredentials,
+    setMicrophoneStream,
+    setTranscriptionClient,
+    transcribedText,
+    user,
+    setTranscripts,
+    localMute,
+  } = props;
 
-  useEffect(() => {
-    async function getAuth() {
-      setCurrentSession(await Auth.currentSession());
-      setCurrentCredentials(await Auth.currentUserCredentials());
+  const stopRecording = function () {
+    if (microphoneStream && transcriptionClient) {
+      TranscribeClient.stopRecording(microphoneStream, transcriptionClient);
     }
-    getAuth();
-  }, []);
+  };
 
-  useEffect(() => {
-    toggleMute();
-  }, [localMute]);
-
-  useEffect(() => {
-    console.log(`transcribeMeeting transcribeStatus: ${transcribeStatus}`);
-    async function joinMeeting() {
-      const email = (await Auth.currentUserInfo()).attributes.email;
-      const name = (await Auth.currentUserInfo()).attributes.name;
-      setAttendeeName(name);
-      try {
-        const joinResponse = await API.post('meetingApi', '/create', {
-          body: {
-            name: name,
-            email: email,
-            requestId: '',
-            attendeeCapabilities: {
-              Audio: 'Send',
-              Content: 'None',
-              Video: 'None',
-            },
-          },
-        });
-        const meetingSessionConfiguration = new MeetingSessionConfiguration(
-          joinResponse.Meeting,
-          joinResponse.Attendee,
-        );
-
-        const options = {
-          deviceLabels: DeviceLabels.AudioAndVideo,
-        };
-
-        await meetingManager.join(meetingSessionConfiguration, options);
-        await meetingManager.start();
-        console.log(`meetingId in join: ${joinResponse.Meeting.MeetingId}`);
-        meetingManager.invokeDeviceProvider(DeviceLabels.AudioAndVideo);
-        setTranscribeMeetingId(joinResponse.Meeting.MeetingId);
-
-        const transcribeResponse = await API.post('meetingApi', '/transcribe', {
-          body: {
-            action: transcribeStatus,
-            meetingId: joinResponse.Meeting.MeetingId,
-            sourceLanguage: sourceLanguage || 'en-US',
-          },
-        });
-        console.log(`transcribeResponse: ${transcribeResponse}`);
-      } catch (err) {
-        console.log(err);
-      }
-    }
-
-    async function endMeeting() {
-      try {
-        await API.post('meetingApi', '/end', {
-          body: { meetingId: transcribeMeetingId },
-        });
-      } catch (err) {
-        console.log(`{err in handleEnd: ${err}`);
-      }
-    }
-
+  async function toggleTranscribe() {
     if (transcribeStatus) {
-      joinMeeting();
-    } else if (meetingStatus === MeetingStatus.Succeeded) {
-      endMeeting();
+      console.log('startRecording');
+      await startRecording();
+    } else {
+      console.log('stopRecording');
+      await stopRecording();
     }
+  }
+
+  useEffect(() => {
+    toggleTranscribe();
   }, [transcribeStatus]);
 
   useEffect(() => {
-    if (!audioVideo) {
-      console.log('No audioVideo - transcribe');
+    toggleTranscribe();
+  }, [localMute]);
+
+  const onTranscriptionDataReceived = (
+    data,
+    partial,
+    transcriptionClient,
+    microphoneStream,
+  ) => {
+    setTranscripts({
+      sourceLanguage: sourceLanguage,
+      attendeeName: user.attributes.name,
+      transcriptEvent: data,
+      partial: partial,
+    });
+    setMicrophoneStream(microphoneStream);
+    setTranscriptionClient(transcriptionClient);
+  };
+
+  const startRecording = async () => {
+    if (sourceLanguage === '') {
+      alert('Please select a language');
       return;
     }
-    console.log('Audio Video found');
+    console.log('before start');
+    console.log(`language: ${sourceLanguage}`);
+    try {
+      await TranscribeClient.startRecording(
+        sourceLanguage,
+        onTranscriptionDataReceived,
+        currentCredentials,
+      );
+    } catch (error) {
+      alert('An error occurred while recording: ' + error.message);
+      stopRecording();
+    }
+  };
 
-    console.log('Subscribing to transcribe');
-    audioVideo.transcriptionController.subscribeToTranscriptEvent(
-      (transcriptEvent) => {
-        setTranscripts({
-          sourceLanguage: sourceLanguage,
-          attendeeName: attendeeName,
-          transcriptEvent: transcriptEvent,
-        });
-      },
-    );
+  return <></>;
+}
 
-    return () => {
-      audioVideo.transcriptionController.unsubscribeFromTranscriptEvent();
-    };
-  }, [audioVideo]);
-
-  return (
-    <SpaceBetween direction='horizontal' size='xs'>
-      <SpaceBetween direction='vertical' size='l'>
-        <div style={{ height: '600px', width: '720px' }}>
-          <VideoTileGrid />
-        </div>
-      </SpaceBetween>
-    </SpaceBetween>
-  );
-};
-
-export default TranscriptionMeeting;
+export default TranscriptionComponent;

@@ -37,7 +37,8 @@
         "S3AndCloudFront": {}
       },
       "predictions": {
-        "translateText112eae37": {}
+        "translateText112eae37": {},
+        "transcriptionebce4954": {}
       }
     }
   }

@@ -54,6 +54,10 @@ export type AmplifyDependentResourcesAttributes = {
             "region": "string",
             "sourceLang": "string",
             "targetLang": "string"
+        },
+        "transcriptionebce4954": {
+            "region": "string",
+            "language": "string"
         }
     }
 }
