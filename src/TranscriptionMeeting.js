@@ -64,6 +64,7 @@ export function TranscriptionComponent(props) {
   }, [transcribeStatus]);
 
   useEffect(() => {
+    console.log(transcriptionClient);
     toggleTranscribe();
   }, [localMute]);
 
