@@ -112,7 +112,6 @@ const App = () => {
                       sourceLanguage={sourceLanguage}
                       setSourceLanguage={setSourceLanguage}
                       setTranscripts={setTranscripts}
-                      setLine={setLine}
                       localMute={localMute}
                       setLocalMute={setLocalMute}
                     />
@@ -148,7 +147,6 @@ const App = () => {
             transcribeStatus={transcribeStatus}
             sourceLanguage={sourceLanguage}
             setTranscripts={setTranscripts}
-            setLine={setLine}
             transcripts={transcripts}
             lines={lines}
             localMute={localMute}
