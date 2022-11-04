@@ -10,7 +10,6 @@ import {
   LeaveMeeting,
   AudioInputControl,
   Input,
-  Attendees,
   DeviceLabels,
   Record,
   Pause,

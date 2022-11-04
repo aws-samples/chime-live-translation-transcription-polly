@@ -2,22 +2,6 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import { Amplify, Auth } from 'aws-amplify';
 import '@aws-amplify/ui-react/styles.css';
-import {
-  useMeetingManager,
-  MeetingStatus,
-  useToggleLocalMute,
-  useAudioVideo,
-  DeviceLabels,
-  VideoTileGrid,
-  useMeetingStatus,
-} from 'amazon-chime-sdk-component-library-react';
-import {
-  ContentLayout,
-  Container,
-  Header,
-  SpaceBetween,
-  Button,
-} from '@cloudscape-design/components';
 import '@cloudscape-design/global-styles/index.css';
 import * as TranscribeClient from './TranscribeClient';
 import awsExports from './aws-exports';

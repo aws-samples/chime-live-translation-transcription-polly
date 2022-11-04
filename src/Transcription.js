@@ -38,6 +38,21 @@ const Transcription = ({ targetLanguage, setLine, transcripts, lines }) => {
     transcribeText();
   }, [transcripts]);
 
+  const handlePartialTranscripts = (incomingTranscripts, outputText, setCurrentLine, setLine) => {
+    if (incomingTranscripts.partial) {
+      console.log('partial');
+      setCurrentLine(
+          `${incomingTranscripts.attendeeName}: ${incomingTranscripts.transcriptEvent}`,
+      );
+    } else {
+      setLine((lines) => [
+        ...lines,
+        `${incomingTranscripts.attendeeName}: ${incomingTranscripts.transcriptEvent}`,
+      ]);
+      setCurrentLine('');
+    }
+  }
+
   useEffect(() => {
     async function transcribeText() {
       console.log(
@@ -61,31 +76,19 @@ const Transcription = ({ targetLanguage, setLine, transcripts, lines }) => {
             `translateResult: ${JSON.stringify(translateResult.text)}`,
           );
 
-          if (incomingTranscripts.partial) {
-            console.log('partial');
-            setCurrentLine(
-              `${incomingTranscripts.attendeeName}: ${translateResult.text}`,
-            );
-          } else {
-            setLine((lines) => [
-              ...lines,
-              `${incomingTranscripts.attendeeName}: ${translateResult.text}`,
-            ]);
-            setCurrentLine('');
-          }
+          handlePartialTranscripts(incomingTranscripts,
+              translateResult.text,
+              setCurrentLine,
+              setLine
+          );
         } else {
-          if (incomingTranscripts.partial) {
-            console.log('partial');
-            setCurrentLine(
-              `${incomingTranscripts.attendeeName}: ${incomingTranscripts.transcriptEvent}`,
-            );
-          } else {
-            setLine((lines) => [
-              ...lines,
-              `${incomingTranscripts.attendeeName}: ${incomingTranscripts.transcriptEvent}`,
-            ]);
-            setCurrentLine('');
-          }
+          handlePartialTranscripts(incomingTranscripts,
+              incomingTranscripts.transcriptEvent,
+              setCurrentLine,
+              setLine
+          );
+
+
         }
       }
     }
