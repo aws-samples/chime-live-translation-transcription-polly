@@ -10,6 +10,24 @@ import '@cloudscape-design/global-styles/index.css';
 import awsExports from './aws-exports';
 Amplify.configure(awsExports);
 
+const handlePartialTranscripts = (incomingTranscripts, outputText, setCurrentLine, setLine) => {
+  if (incomingTranscripts.partial) {
+    // console.log('partial');
+    // TODO(miketran): break this into a list of objects
+    setCurrentLine(
+        `${incomingTranscripts.attendeeName}: ${outputText}`,
+    );
+  } else {
+    // TODO(miketran): break this into a list of objects
+
+    setLine((lines) => [
+      ...lines,
+      `${incomingTranscripts.attendeeName}: ${outputText}`,
+    ]);
+    setCurrentLine('');
+  }
+}
+
 const Transcription = ({ targetLanguage, setLine, transcripts, lines }) => {
   const audioVideo = useAudioVideo();
   const [incomingTranscripts, setIncomingTranscripts] = useState([]);
@@ -19,39 +37,15 @@ const Transcription = ({ targetLanguage, setLine, transcripts, lines }) => {
     async function transcribeText() {
       // console.log(`transcripts: ${JSON.stringify(transcripts)}`);
       if (transcripts.transcriptEvent) {
-
-        if (transcripts.partial) {
-          // TODO(miketran): break this into a list of objects
-          setCurrentLine(
-            `${transcripts.attendeeName}: ${transcripts.transcriptEvent}`,
-          );
-        } else {
-          // TODO(miketran): break this into a list of objects
-          setLine((lines) => [
-            ...lines,
-            `${transcripts.attendeeName}: ${transcripts.transcriptEvent}`,
-          ]);
-          setCurrentLine('');
-        }
+        handlePartialTranscripts(incomingTranscripts,
+            incomingTranscripts.transcriptEvent,
+            setCurrentLine,
+            setLine
+        );
       }
     }
     transcribeText();
   }, [transcripts]);
-
-  const handlePartialTranscripts = (incomingTranscripts, outputText, setCurrentLine, setLine) => {
-    if (incomingTranscripts.partial) {
-      console.log('partial');
-      setCurrentLine(
-          `${incomingTranscripts.attendeeName}: ${incomingTranscripts.transcriptEvent}`,
-      );
-    } else {
-      setLine((lines) => [
-        ...lines,
-        `${incomingTranscripts.attendeeName}: ${incomingTranscripts.transcriptEvent}`,
-      ]);
-      setCurrentLine('');
-    }
-  }
 
   useEffect(() => {
     async function transcribeText() {
@@ -87,8 +81,6 @@ const Transcription = ({ targetLanguage, setLine, transcripts, lines }) => {
               setCurrentLine,
               setLine
           );
-
-
         }
       }
     }
@@ -97,11 +89,11 @@ const Transcription = ({ targetLanguage, setLine, transcripts, lines }) => {
 
   useEffect(() => {
     if (!audioVideo) {
-      console.log('No audioVideo');
+      console.error('No audioVideo');
       return;
     }
     if (transcripts) {
-      console.log(`Sending transcriptEvent: ${JSON.stringify(transcripts)}`);
+      // console.log(`Sending transcriptEvent: ${JSON.stringify(transcripts)}`);
       audioVideo.realtimeSendDataMessage(
         'transcriptEvent',
         { message: transcripts },
@@ -112,16 +104,16 @@ const Transcription = ({ targetLanguage, setLine, transcripts, lines }) => {
 
   useEffect(() => {
     if (!audioVideo) {
-      console.log('No audioVideo');
+      console.error('No audioVideo');
       return;
     }
-    console.log('Audio Video found - receive transcriptEvent messages');
+    // console.log('Audio Video found - receive transcriptEvent messages');
     audioVideo.realtimeSubscribeToReceiveDataMessage(
       'transcriptEvent',
       (data) => {
         const receivedData = (data && data.json()) || {};
         const { message } = receivedData;
-        console.log(`incomingTranscriptEvent: ${message}`);
+        // console.log(`incomingTranscriptEvent: ${message}`);
         setIncomingTranscripts(message);
       },
     );
