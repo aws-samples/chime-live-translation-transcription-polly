@@ -89,8 +89,6 @@ export function TranscriptionComponent(props) {
       alert('Please select a language');
       return;
     }
-    console.log('before start');
-    console.log(`language: ${sourceLanguage}`);
     try {
       await TranscribeClient.startRecording(
         sourceLanguage,

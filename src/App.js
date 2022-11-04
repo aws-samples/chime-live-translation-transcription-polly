@@ -46,7 +46,7 @@ const App = () => {
   const [transcribeStatus, setTranscribeStatus] = useState(false);
   const [translateStatus, setTranslateStatus] = useState(false);
   const [targetLanguage, setTargetLanguage] = useState('en-US');
-  const [sourceLanguage, setSourceLanguage] = useState('');
+  const [sourceLanguage, setSourceLanguage] = useState('en-US');
   const [localMute, setLocalMute] = useState(false);
   const [transcribedText, setTranscribedText] = useState([]);
   const [microphoneStream, setMicrophoneStream] = useState();
