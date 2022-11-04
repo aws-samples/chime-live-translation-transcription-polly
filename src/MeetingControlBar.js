@@ -45,6 +45,8 @@ const MeetingControlBar = ({
 
   useEffect(() => {
     setLocalMute(muted);
+// Turns off transcription.
+    setTranscribeStatus(false);
   }, [toggleMute]);
 
   const JoinButtonProps = {

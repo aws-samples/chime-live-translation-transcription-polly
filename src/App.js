@@ -45,7 +45,6 @@ const App = () => {
   const [lines, setLine] = useState([]);
   const [transcribeStatus, setTranscribeStatus] = useState(false);
   const [translateStatus, setTranslateStatus] = useState(false);
-  const [targetLanguage, setTargetLanguage] = useState('en-US');
   const [sourceLanguage, setSourceLanguage] = useState('en-US');
   const [localMute, setLocalMute] = useState(false);
   const [transcribedText, setTranscribedText] = useState([]);
@@ -113,7 +112,6 @@ const App = () => {
                       translateStatus={translateStatus}
                       setTranslateStatus={setTranslateStatus}
                       sourceLanguages={sourceLanguages}
-                      targetLanguage={targetLanguage}
                       sourceLanguage={sourceLanguage}
                       setSourceLanguage={setSourceLanguage}
                       setTranscripts={setTranscripts}

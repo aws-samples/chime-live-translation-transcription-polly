@@ -17,52 +17,23 @@ const Transcription = ({ targetLanguage, setLine, transcripts, lines }) => {
 
   useEffect(() => {
     async function transcribeText() {
-      console.log(`transcripts: ${JSON.stringify(transcripts)}`);
+      // console.log(`transcripts: ${JSON.stringify(transcripts)}`);
       if (transcripts.transcriptEvent) {
-        console.log('transcripts.transcriptEvent');
-        // if (transcripts.transcriptEvent.results !== undefined) {
-        //   console.log('transcripts.transcriptEvent.results !== undefined');
-        //   if (!transcripts.transcriptEvent.results[0].isPartial) {
-        //     if (
-        //       transcripts.transcriptEvent.results[0].alternatives[0].items[0]
-        //         .confidence > 0.5
-        //     ) {
-        // console.log(`sourceLanguage: ${transcripts.sourceLanguage}`);
-        // console.log(`targetLanguage: ${targetLanguage}`);
-        // if (transcripts.sourceLanguage != targetLanguage) {
-        //   var translateResult = await Predictions.convert({
-        //     translateText: {
-        //       source: {
-        //         text: transcripts.transcriptEvent,
-        //         language: transcripts.sourceLanguage,
-        //       },
-        //       targetLanguage: targetLanguage,
-        //     },
-        //   });
-        //   console.log(
-        //     `translateResult: ${JSON.stringify(translateResult.text)}`,
-        //   );
-        //   setLine((lines) => [
-        //     ...lines,
-        //     `${transcript.attendeeName}: ${translateResult.text}`,
-        //   ]);
-        // } else {
+
         if (transcripts.partial) {
+          // TODO(miketran): break this into a list of objects
           setCurrentLine(
             `${transcripts.attendeeName}: ${transcripts.transcriptEvent}`,
           );
         } else {
+          // TODO(miketran): break this into a list of objects
           setLine((lines) => [
             ...lines,
             `${transcripts.attendeeName}: ${transcripts.transcriptEvent}`,
           ]);
           setCurrentLine('');
         }
-        // }
       }
-      //     }
-      //   }
-      // }
     }
     transcribeText();
   }, [transcripts]);
@@ -73,17 +44,11 @@ const Transcription = ({ targetLanguage, setLine, transcripts, lines }) => {
         `incomingTranscripts: ${JSON.stringify(incomingTranscripts)}`,
       );
       if (incomingTranscripts.transcriptEvent) {
-        // if (incomingTranscripts.transcriptEvent.results !== undefined) {
-        //   if (!incomingTranscripts.transcriptEvent.results[0].isPartial) {
-        //     if (
-        //       incomingTranscripts.transcriptEvent.results[0].alternatives[0]
-        //         .items[0].confidence > 0.5
-        //     ) {
         console.log(`sourceLanguage: ${incomingTranscripts.sourceLanguage}`);
         console.log(`targetLanguage: ${targetLanguage}`);
 
-        if (incomingTranscripts.sourceLanguage != targetLanguage) {
-          var translateResult = await Predictions.convert({
+        if (incomingTranscripts.sourceLanguage !== targetLanguage) {
+          const translateResult = await Predictions.convert({
             translateText: {
               source: {
                 text: incomingTranscripts.transcriptEvent,
@@ -122,9 +87,6 @@ const Transcription = ({ targetLanguage, setLine, transcripts, lines }) => {
             setCurrentLine('');
           }
         }
-        //     }
-        //   }
-        // }
       }
     }
     transcribeText();
@@ -136,16 +98,12 @@ const Transcription = ({ targetLanguage, setLine, transcripts, lines }) => {
       return;
     }
     if (transcripts) {
-      // if (transcripts.transcriptEvent.results !== undefined) {
-      //   if (!transcripts.transcriptEvent.results[0].isPartial) {
       console.log(`Sending transcriptEvent: ${JSON.stringify(transcripts)}`);
       audioVideo.realtimeSendDataMessage(
         'transcriptEvent',
         { message: transcripts },
         30000,
       );
-      //   }
-      // }
     }
   }, [transcripts]);
 
@@ -158,7 +116,6 @@ const Transcription = ({ targetLanguage, setLine, transcripts, lines }) => {
     audioVideo.realtimeSubscribeToReceiveDataMessage(
       'transcriptEvent',
       (data) => {
-        // console.log(`realtimeData: ${JSON.stringify(data)}`);
         const receivedData = (data && data.json()) || {};
         const { message } = receivedData;
         console.log(`incomingTranscriptEvent: ${message}`);
@@ -176,6 +133,7 @@ const Transcription = ({ targetLanguage, setLine, transcripts, lines }) => {
     <Container header={<Header variant='h2'>Transcription</Header>}>
       <SpaceBetween size='xs'>
         <div style={{ height: '663px', width: '240px' }}>
+        {/* // TODO(miketran): break this into a list of objects*/}
           {lines.slice(Math.max(lines.length - 10, 0)).map((line, index) => (
             <div key={index}>
               {line}
