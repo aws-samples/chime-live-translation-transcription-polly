@@ -51,6 +51,7 @@ const App = () => {
   const [transcribedText, setTranscribedText] = useState([]);
   const [microphoneStream, setMicrophoneStream] = useState();
   const [transcriptionClient, setTranscriptionClient] = useState();
+
   useEffect(() => {
     async function getAuth() {
       setCurrentSession(await Auth.currentSession());

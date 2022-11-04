@@ -24,6 +24,7 @@ import '@cloudscape-design/global-styles/index.css';
 import { MeetingSessionConfiguration } from 'amazon-chime-sdk-js';
 
 import awsExports from './aws-exports';
+import {Loader} from "@aws-amplify/ui-react";
 Amplify.configure(awsExports);
 
 const MeetingControlBar = ({
@@ -40,6 +41,7 @@ const MeetingControlBar = ({
   const audioVideo = useAudioVideo();
   const meetingManager = useMeetingManager();
   const { muted, toggleMute } = useToggleLocalMute();
+  const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
     setLocalMute(muted);
@@ -64,7 +66,7 @@ const MeetingControlBar = ({
   };
 
   const TranscribeButtonProps = {
-    icon: transcribeStatus ? <Pause /> : <Record />,
+    icon: transcribeStatus ? <Pause className={"pauseTranscription"}/> : <Record />,
     popOver: sourceLanguages?.map((sourceLanguage) => ({
       onClick: () => setSourceLanguage(sourceLanguage.code),
       children: <span>{sourceLanguage.language}</span>,
@@ -89,6 +91,7 @@ const MeetingControlBar = ({
 
   const handleJoin = async (event) => {
     event.preventDefault();
+    setLoading(true);
     const email = (await Auth.currentUserInfo()).attributes.email;
     const name = (await Auth.currentUserInfo()).attributes.name;
     try {
@@ -108,6 +111,7 @@ const MeetingControlBar = ({
       await meetingManager.start();
       meetingManager.invokeDeviceProvider(DeviceLabels.AudioAndVideo);
       setMeetingId(joinResponse.Meeting.MeetingId);
+      setLoading(false)
     } catch (err) {
       console.log(`err in handleJoin: ${err}`);
     }
@@ -132,7 +136,7 @@ const MeetingControlBar = ({
         placeholder='Request ID'
         type='text'
       />
-
+      {isLoading && <Loader/>}
       {!audioVideo && <ControlBarButton {...JoinButtonProps} />}
       {audioVideo && (
         <>
