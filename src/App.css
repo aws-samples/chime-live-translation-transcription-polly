@@ -30,3 +30,7 @@
   background-color: lightblue;
   border-radius: 50%;
 }
+
+.transcriptionContainer {
+  overflow-y: auto;
+}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import './App.css';
 import { Container, Header, SpaceBetween } from '@cloudscape-design/components';
 import { Amplify } from 'aws-amplify';
@@ -9,6 +9,12 @@ import '@cloudscape-design/global-styles/index.css';
 
 import awsExports from './aws-exports';
 Amplify.configure(awsExports);
+
+const AlwaysScrollToBottom = () => {
+  const elementRef = useRef();
+  useEffect(() => elementRef.current.scrollIntoView());
+  return <div ref={elementRef} />;
+};
 
 const handlePartialTranscripts = (incomingTranscripts, outputText, setCurrentLine, setLine) => {
   const newTranscriptObject = {
@@ -128,8 +134,8 @@ const Transcription = ({ targetLanguage, setLine, transcripts, lines }) => {
   return (
     <Container header={<Header variant='h2'>Transcription</Header>}>
       <SpaceBetween size='xs'>
-        <div style={{ height: '663px', width: '240px' }}>
-          {lines.slice(Math.max(lines.length - 10, 0)).map((line, index) => (
+        <div style={{ height: '663px', width: '240px' }} className={"transcriptionContainer"}>
+          {lines.map((line, index) => (
                <div key={index}>
                   <strong>{line.attendeeName}</strong>: {line.text}
                   <br />
@@ -142,6 +148,7 @@ const Transcription = ({ targetLanguage, setLine, transcripts, lines }) => {
                 <br />
               </div>
           ))}
+          <AlwaysScrollToBottom />
         </div>
       </SpaceBetween>
     </Container>
