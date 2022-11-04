@@ -32,8 +32,6 @@ const MeetingControlBar = ({
   setTranscribeStatus,
   setSourceLanguage,
   sourceLanguages,
-  translateStatus,
-  setTranslateStatus,
   setLocalMute,
 }) => {
   const [meetingId, setMeetingId] = useState('');

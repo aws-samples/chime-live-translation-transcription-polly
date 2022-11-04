@@ -24,20 +24,14 @@ import awsExports from './aws-exports';
 Amplify.configure(awsExports);
 
 export function TranscriptionComponent(props) {
-  const audioVideo = useAudioVideo();
   const {
-    selectedLanguage,
     transcribeStatus,
     sourceLanguage,
-    handleInputLanguageList,
     microphoneStream,
     transcriptionClient,
-    userCredentials,
-    currentSession,
     currentCredentials,
     setMicrophoneStream,
     setTranscriptionClient,
-    transcribedText,
     user,
     setTranscripts,
     localMute,

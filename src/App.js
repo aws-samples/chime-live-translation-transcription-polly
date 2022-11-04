@@ -47,7 +47,6 @@ const App = () => {
   const [translateStatus, setTranslateStatus] = useState(false);
   const [sourceLanguage, setSourceLanguage] = useState('en-US');
   const [localMute, setLocalMute] = useState(false);
-  const [transcribedText, setTranscribedText] = useState([]);
   const [microphoneStream, setMicrophoneStream] = useState();
   const [transcriptionClient, setTranscriptionClient] = useState();
 
@@ -109,8 +108,6 @@ const App = () => {
                     <MeetingControlBar
                       transcribeStatus={transcribeStatus}
                       setTranscribeStatus={setTranscribeStatus}
-                      translateStatus={translateStatus}
-                      setTranslateStatus={setTranslateStatus}
                       sourceLanguages={sourceLanguages}
                       sourceLanguage={sourceLanguage}
                       setSourceLanguage={setSourceLanguage}
@@ -155,7 +152,6 @@ const App = () => {
             transcripts={transcripts}
             lines={lines}
             localMute={localMute}
-            transcribedText={transcribedText}
             setMicrophoneStream={setMicrophoneStream}
             setTranscriptionClient={setTranscriptionClient}
             microphoneStream={microphoneStream}
