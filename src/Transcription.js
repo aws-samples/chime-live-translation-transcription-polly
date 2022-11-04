@@ -11,18 +11,19 @@ import awsExports from './aws-exports';
 Amplify.configure(awsExports);
 
 const handlePartialTranscripts = (incomingTranscripts, outputText, setCurrentLine, setLine) => {
+  console.log(incomingTranscripts, "incomingTranscripts");
+  console.log(outputText, "outputText");
+  const newTranscriptObject = {
+    attendeeName: `${incomingTranscripts.attendeeName}`,
+    text: `${outputText}`
+  };
   if (incomingTranscripts.partial) {
     // console.log('partial');
-    // TODO(miketran): break this into a list of objects
-    setCurrentLine(
-        `${incomingTranscripts.attendeeName}: ${outputText}`,
-    );
+    setCurrentLine(newTranscriptObject);
   } else {
-    // TODO(miketran): break this into a list of objects
-
     setLine((lines) => [
       ...lines,
-      `${incomingTranscripts.attendeeName}: ${outputText}`,
+      newTranscriptObject,
     ]);
     setCurrentLine('');
   }
@@ -70,13 +71,15 @@ const Transcription = ({ targetLanguage, setLine, transcripts, lines }) => {
             `translateResult: ${JSON.stringify(translateResult.text)}`,
           );
 
-          handlePartialTranscripts(incomingTranscripts,
+          handlePartialTranscripts(
+              incomingTranscripts,
               translateResult.text,
               setCurrentLine,
               setLine
           );
         } else {
-          handlePartialTranscripts(incomingTranscripts,
+          handlePartialTranscripts(
+              incomingTranscripts,
               incomingTranscripts.transcriptEvent,
               setCurrentLine,
               setLine
@@ -123,15 +126,14 @@ const Transcription = ({ targetLanguage, setLine, transcripts, lines }) => {
       audioVideo.realtimeUnsubscribeFromReceiveDataMessage('Message');
     };
   }, [audioVideo]);
-
+  console.log(lines, "lines")
   return (
     <Container header={<Header variant='h2'>Transcription</Header>}>
       <SpaceBetween size='xs'>
         <div style={{ height: '663px', width: '240px' }}>
-        {/* // TODO(miketran): break this into a list of objects*/}
           {lines.slice(Math.max(lines.length - 10, 0)).map((line, index) => (
             <div key={index}>
-              {line}
+              <strong>{line.attendeeName}</strong>: {line.text}
               <br />
             </div>
           ))}
