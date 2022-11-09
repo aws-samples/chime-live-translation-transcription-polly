@@ -27,6 +27,22 @@ export const startRecording = async (
   );
 };
 
+/**
+ *
+ * @param microphoneStream MicrophoneStream
+ * @param transcribeClient TranscribeClient
+ */
+export const muteMicrophoneContinueTranscribe = function (microphoneStream: MicrophoneStream,
+                                                          transcribeClient: TranscribeStreamingClient,
+) {
+  if (microphoneStream) {
+    microphoneStream.stop();
+  }
+  if (transcribeClient) {
+    console.error('muteRecording - transcribeClient', transcribeClient);
+  }
+}
+
 export const stopRecording = function (
     microphoneStream: MicrophoneStream,
     transcribeClient: { destroy: () => void; }
@@ -75,7 +91,7 @@ const startStreaming = async (
   language: string,
   microphoneStream: MicrophoneStream,
   transcribeClient: TranscribeStreamingClient,
-  callback: { (data: any, partial: boolean, transcriptionClient: any, microphoneStream: MicrophoneStream): void; (arg0: string, arg1: any, arg2: any, arg3: any): void; },
+  callback: { (data: any, partial: boolean, transcriptionClient: TranscribeStreamingClient, microphoneStream: MicrophoneStream): void; (arg0: string, arg1: any, arg2: any, arg3: any): void; },
 ) => {
   console.log(`in startStreaming.  language: ${language}`);
   const audioStream = await getAudioStream(microphoneStream);

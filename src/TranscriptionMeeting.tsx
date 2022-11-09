@@ -7,6 +7,7 @@ import * as TranscribeClient from './TranscribeClient';
 import awsExports from './aws-exports';
 import MicrophoneStream from "microphone-stream";
 import {ICredentials} from "@aws-amplify/core";
+import {TranscribeStreamingClient} from "@aws-sdk/client-transcribe-streaming";
 Amplify.configure(awsExports);
 
 interface tTranscriptionInput {
@@ -17,7 +18,7 @@ interface tTranscriptionInput {
   setMicrophoneStream: any;
   setTranscripts: any
   localMute: boolean,
-  setTranscriptionClient: (a: any) => void,
+  setTranscriptionClient: (a: TranscribeStreamingClient) => void,
   currentCredentials: ICredentials,
   transcriptionClient: any,
 }
@@ -50,6 +51,10 @@ export function TranscriptionComponent(props: tTranscriptionInput) {
   };
 
   async function toggleTranscribe() {
+    if(localMute){
+      // keep transcription, just mute
+      return;
+    }
     if (transcribeStatus) {
       console.log('startRecording');
       await startRecording();
@@ -71,7 +76,7 @@ export function TranscriptionComponent(props: tTranscriptionInput) {
   const onTranscriptionDataReceived = (
     data: any,
     partial: boolean,
-    transcriptionClient: any,
+    transcriptionClient: TranscribeStreamingClient,
     microphoneStream: MicrophoneStream,
   ) => {
     setTranscripts({
