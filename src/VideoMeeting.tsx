@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import './App.css';
 import {
   useLocalVideo,
@@ -9,7 +9,14 @@ import {
 import '@aws-amplify/ui-react/styles.css';
 import '@cloudscape-design/global-styles/index.css';
 
-const VideoMeeting = ({ setLine, setTranscribeStatus, setTranslateStatus }) => {
+interface tVideoMeeting {
+  setLine: (input: string[]) => void,
+  setTranscribeStatus: (input: boolean) => void,
+  setTranslateStatus: (input: boolean) => void,
+}
+
+const VideoMeeting = (props: tVideoMeeting) => {
+  const { setLine, setTranscribeStatus, setTranslateStatus } = props;
   const meetingStatus = useMeetingStatus();
   const { toggleVideo } = useLocalVideo();
 
