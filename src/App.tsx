@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import { Amplify, Auth } from 'aws-amplify';
-import { Authenticator, SelectField } from '@aws-amplify/ui-react';
+import { Authenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 import '@cloudscape-design/global-styles/index.css';
 import VideoMeeting from './VideoMeeting';
@@ -23,7 +23,12 @@ import {
 Amplify.configure(awsExports);
 Amplify.addPluggable(new AmazonAIPredictionsProvider());
 
-const sourceLanguages = [
+export interface tSourceLanguage {
+  language: string,
+  code: string
+}
+
+const sourceLanguages: tSourceLanguage[] = [
   { language: 'English - US', code: 'en-US' },
   { language: 'English - GB', code: 'en-GB' },
   { language: 'English - AU', code: 'en-AU' },
@@ -41,12 +46,12 @@ const sourceLanguages = [
 const App = () => {
   const [currentCredentials, setCurrentCredentials] = useState({});
   const [currentSession, setCurrentSession] = useState({});
-  const [transcripts, setTranscripts] = useState([]);
-  const [lines, setLine] = useState([]);
-  const [transcribeStatus, setTranscribeStatus] = useState(false);
-  const [translateStatus, setTranslateStatus] = useState(false);
-  const [sourceLanguage, setSourceLanguage] = useState('en-US');
-  const [localMute, setLocalMute] = useState(false);
+  const [transcripts, setTranscripts] = useState<any[]>([]);
+  const [lines, setLine] = useState<string[]>([]);
+  const [transcribeStatus, setTranscribeStatus] = useState<boolean>(false);
+  const [translateStatus, setTranslateStatus] = useState<boolean>(false);
+  const [localMute, setLocalMute] = useState<boolean>(false);
+  const [sourceLanguage, setSourceLanguage] = useState<string>('en-US');
   const [microphoneStream, setMicrophoneStream] = useState();
   const [transcriptionClient, setTranscriptionClient] = useState();
 
@@ -109,7 +114,6 @@ const App = () => {
                       transcribeStatus={transcribeStatus}
                       setTranscribeStatus={setTranscribeStatus}
                       sourceLanguages={sourceLanguages}
-                      sourceLanguage={sourceLanguage}
                       setSourceLanguage={setSourceLanguage}
                       setTranscripts={setTranscripts}
                       localMute={localMute}

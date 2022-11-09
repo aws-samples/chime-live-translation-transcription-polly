@@ -7,7 +7,20 @@ import * as TranscribeClient from './TranscribeClient';
 import awsExports from './aws-exports';
 Amplify.configure(awsExports);
 
-export function TranscriptionComponent(props) {
+interface tTranscriptionInput {
+  transcribeStatus: any,
+  sourceLanguage,
+  microphoneStream,
+  transcriptionClient,
+  currentCredentials,
+  setMicrophoneStream,
+  setTranscriptionClient,
+  user,
+  setTranscripts,
+  localMute,
+}
+
+export function TranscriptionComponent(props: tTranscriptionInput) {
   const {
     transcribeStatus,
     sourceLanguage,

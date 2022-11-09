@@ -24,22 +24,32 @@ import { MeetingSessionConfiguration } from 'amazon-chime-sdk-js';
 
 import awsExports from './aws-exports';
 import {Loader} from "@aws-amplify/ui-react";
+import {tSourceLanguage} from "./App";
 Amplify.configure(awsExports);
 
-const MeetingControlBar = ({
-  transcribeStatus,
-  setTranscribeStatus,
-  setSourceLanguage,
-  sourceLanguages,
-  setLocalMute,
-}) => {
+interface tMeeetingControlBarInput {
+  transcribeStatus: boolean,
+  setTranscribeStatus: (a: boolean) => void,
+  setSourceLanguage: (a: string) => void,
+  sourceLanguages: tSourceLanguage[],
+  setLocalMute: (a: boolean) => void,
+}
+
+const MeetingControlBar = (props: tMeeetingControlBarInput) => {
   const [meetingId, setMeetingId] = useState('');
   const [requestId, setRequestId] = useState('');
   const audioVideo = useAudioVideo();
   const meetingManager = useMeetingManager();
   const { muted, toggleMute } = useToggleLocalMute();
   const [isLoading, setLoading] = useState(false);
-
+  const {
+    transcribeStatus,
+    setTranscribeStatus,
+    setSourceLanguage,
+    sourceLanguages,
+    setLocalMute,
+  } = props;
+  
   useEffect(() => {
     setLocalMute(muted);
 // Turns off transcription.
@@ -48,19 +58,19 @@ const MeetingControlBar = ({
 
   const JoinButtonProps = {
     icon: <Meeting />,
-    onClick: (event) => handleJoin(event),
+    onClick: () => handleJoin(),
     label: 'Join',
   };
 
   const LeaveButtonProps = {
     icon: <LeaveMeeting />,
-    onClick: (event) => handleLeave(event),
+    onClick: () => handleLeave(),
     label: 'Leave',
   };
 
   const EndButtonProps = {
     icon: <Remove />,
-    onClick: (event) => handleEnd(event),
+    onClick: () => handleEnd(),
     label: 'End',
   };
 
@@ -70,17 +80,16 @@ const MeetingControlBar = ({
       onClick: () => setSourceLanguage(sourceLanguage.code),
       children: <span>{sourceLanguage.language}</span>,
     })),
-    onClick: (event) => handleTranscribe(event),
+    onClick: () => handleTranscribe(),
     label: 'Transcribe',
   };
 
-  const handleLeave = async (event) => {
+  const handleLeave = async () => {
     await meetingManager.leave();
   };
 
-  const handleEnd = async (event) => {
+  const handleEnd = async () => {
     console.log(`Auth ${JSON.stringify(await Auth.currentUserInfo())}`);
-    event.preventDefault();
     try {
       await API.post('meetingApi', '/end', { body: { meetingId: meetingId } });
     } catch (err) {
@@ -88,8 +97,7 @@ const MeetingControlBar = ({
     }
   };
 
-  const handleJoin = async (event) => {
-    event.preventDefault();
+  const handleJoin = async () => {
     setLoading(true);
     const email = (await Auth.currentUserInfo()).attributes.email;
     const name = (await Auth.currentUserInfo()).attributes.name;
@@ -116,8 +124,7 @@ const MeetingControlBar = ({
     }
   };
 
-  const handleTranscribe = async (event) => {
-    event.preventDefault();
+  const handleTranscribe = async () => {
     setTranscribeStatus(!transcribeStatus);
   };
 
@@ -129,7 +136,7 @@ const MeetingControlBar = ({
     >
       <Input
         showClear={true}
-        onChange={(e) => setRequestId(e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setRequestId(e.target.value)}
         sizing={'md'}
         value={requestId}
         placeholder='Request ID'
