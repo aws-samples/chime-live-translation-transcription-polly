@@ -8,9 +8,10 @@ import {
 } from 'amazon-chime-sdk-component-library-react';
 import '@aws-amplify/ui-react/styles.css';
 import '@cloudscape-design/global-styles/index.css';
+import {tIncomingTranscripts} from "./App";
 
 interface tVideoMeeting {
-  setLine: (input: string[]) => void,
+  setLine: (input: tIncomingTranscripts[]) => void,
   setTranscribeStatus: (input: boolean) => void,
   setTranslateStatus: (input: boolean) => void,
 }

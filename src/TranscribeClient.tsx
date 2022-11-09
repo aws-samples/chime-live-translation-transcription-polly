@@ -5,9 +5,9 @@ import { StartStreamTranscriptionCommand } from '@aws-sdk/client-transcribe-stre
 const SAMPLE_RATE = 44100;
 
 export const startRecording = async (
-  language,
-  callback,
-  currentCredentials,
+  language: string,
+  callback: (data: any, partial: boolean, transcriptionClient: any, microphoneStream: MicrophoneStream) => void,
+  currentCredentials: any,
 ) => {
   if (!language) {
     console.log('no language');
@@ -27,7 +27,10 @@ export const startRecording = async (
   );
 };
 
-export const stopRecording = function (microphoneStream, transcribeClient) {
+export const stopRecording = function (
+    microphoneStream: MicrophoneStream,
+    transcribeClient: { destroy: () => void; }
+) {
   console.log('stopRecording - pre');
   console.log(`microphoneStream: ${microphoneStream}`);
   console.log(`transcribeClient: ${transcribeClient}`);
@@ -69,10 +72,10 @@ const createMicrophoneStream = async () => {
 };
 
 const startStreaming = async (
-  language,
-  microphoneStream,
-  transcribeClient,
-  callback,
+  language: string,
+  microphoneStream: MicrophoneStream,
+  transcribeClient: TranscribeStreamingClient,
+  callback: { (data: any, partial: boolean, transcriptionClient: any, microphoneStream: MicrophoneStream): void; (arg0: string, arg1: any, arg2: any, arg3: any): void; },
 ) => {
   console.log(`in startStreaming.  language: ${language}`);
   const audioStream = await getAudioStream(microphoneStream);
@@ -114,7 +117,7 @@ const startStreaming = async (
   }
 };
 
-const pcmEncode = (input) => {
+const pcmEncode = (input: Float32Array) => {
   const buffer = new ArrayBuffer(input.length * 2);
   const view = new DataView(buffer);
   for (let i = 0; i < input.length; i++) {
@@ -124,8 +127,8 @@ const pcmEncode = (input) => {
   return buffer;
 };
 
-const getAudioStream = async function* (microphoneStream) {
-  const pcmEncodeChunk = (audioChunk) => {
+const getAudioStream = async function* (microphoneStream: MicrophoneStream) {
+  const pcmEncodeChunk = (audioChunk: Buffer) => {
     const raw = MicrophoneStream.toRaw(audioChunk);
     if (raw === null) {
       return;

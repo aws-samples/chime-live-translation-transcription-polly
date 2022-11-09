@@ -1,23 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
-import { Amplify, Auth } from 'aws-amplify';
+import {Amplify, Auth} from 'aws-amplify';
 import '@aws-amplify/ui-react/styles.css';
 import '@cloudscape-design/global-styles/index.css';
 import * as TranscribeClient from './TranscribeClient';
 import awsExports from './aws-exports';
+import MicrophoneStream from "microphone-stream";
+import {ICredentials} from "@aws-amplify/core";
 Amplify.configure(awsExports);
 
 interface tTranscriptionInput {
-  transcribeStatus: any,
-  sourceLanguage,
-  microphoneStream,
-  transcriptionClient,
-  currentCredentials,
-  setMicrophoneStream,
-  setTranscriptionClient,
-  user,
-  setTranscripts,
-  localMute,
+  transcribeStatus: boolean,
+  sourceLanguage: string,
+  microphoneStream: MicrophoneStream,
+  user: any,
+  setMicrophoneStream: any;
+  setTranscripts: any
+  localMute: boolean,
+  setTranscriptionClient: (a: any) => void,
+  currentCredentials: ICredentials,
+  transcriptionClient: any,
+}
+
+interface tTranscripts {
+  sourceLanguage: string,
+  attendeeName: string,
+  transcriptEvent: any,
+  partial: boolean,
 }
 
 export function TranscriptionComponent(props: tTranscriptionInput) {
@@ -60,10 +69,10 @@ export function TranscriptionComponent(props: tTranscriptionInput) {
   }, [localMute]);
 
   const onTranscriptionDataReceived = (
-    data,
-    partial,
-    transcriptionClient,
-    microphoneStream,
+    data: any,
+    partial: boolean,
+    transcriptionClient: any,
+    microphoneStream: MicrophoneStream,
   ) => {
     setTranscripts({
       sourceLanguage: sourceLanguage,

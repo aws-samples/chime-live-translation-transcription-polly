@@ -9,7 +9,6 @@ import TranscriptionComponent from './TranscriptionMeeting';
 import Transcription from './Transcription';
 import MeetingControlBar from './MeetingControlBar';
 import awsExports from './aws-exports';
-import { MeetingProvider } from 'amazon-chime-sdk-component-library-react';
 import { AmazonAIPredictionsProvider } from '@aws-amplify/predictions';
 
 import {
@@ -19,6 +18,8 @@ import {
   SpaceBetween,
   Button,
 } from '@cloudscape-design/components';
+import {ICredentials} from "@aws-amplify/core";
+import {CognitoUserSession} from "amazon-cognito-identity-js";
 
 Amplify.configure(awsExports);
 Amplify.addPluggable(new AmazonAIPredictionsProvider());
@@ -27,6 +28,15 @@ export interface tSourceLanguage {
   language: string,
   code: string
 }
+
+export interface tIncomingTranscripts {
+  attendeeName: string,
+  partial?: boolean,
+  text: string
+  transcriptEvent?: any,
+  sourceLanguage?: string
+}
+
 
 const sourceLanguages: tSourceLanguage[] = [
   { language: 'English - US', code: 'en-US' },
@@ -44,10 +54,23 @@ const sourceLanguages: tSourceLanguage[] = [
 ];
 
 const App = () => {
-  const [currentCredentials, setCurrentCredentials] = useState({});
-  const [currentSession, setCurrentSession] = useState({});
-  const [transcripts, setTranscripts] = useState<any[]>([]);
-  const [lines, setLine] = useState<string[]>([]);
+  const [currentCredentials, setCurrentCredentials] = useState<ICredentials>({
+    accessKeyId: "",
+    authenticated: false,
+    expiration: undefined,
+    identityId: "",
+    secretAccessKey: "",
+    sessionToken: ""
+  });
+  const [currentSession, setCurrentSession] = useState<CognitoUserSession>();
+  const [transcripts, setTranscripts] = useState<tIncomingTranscripts>({
+    attendeeName: "",
+    partial: false,
+    sourceLanguage: "",
+    text: "",
+    transcriptEvent: undefined
+  });
+  const [lines, setLine] = useState<tIncomingTranscripts[]>([]);
   const [transcribeStatus, setTranscribeStatus] = useState<boolean>(false);
   const [translateStatus, setTranslateStatus] = useState<boolean>(false);
   const [localMute, setLocalMute] = useState<boolean>(false);
@@ -57,7 +80,8 @@ const App = () => {
 
   useEffect(() => {
     async function getAuth() {
-      setCurrentSession(await Auth.currentSession());
+      const session: CognitoUserSession = await Auth.currentSession()
+      setCurrentSession(session);
       setCurrentCredentials(await Auth.currentUserCredentials());
       console.log(`authState: ${JSON.stringify(currentSession)}`);
       console.log(`currentCredentials: ${JSON.stringify(currentCredentials)}`);
@@ -84,84 +108,72 @@ const App = () => {
     },
   };
 
+
   return (
     <Authenticator loginMechanisms={['email']} formFields={formFields}>
-      {({ signOut, user }) => (
-        <MeetingProvider>
-          <ContentLayout
-            header={
-              <SpaceBetween size='m'>
-                <Header
-                  className='ContentHeader'
-                  variant='h2'
-                  actions={
-                    <Button variant='primary' onClick={signOut}>
-                      Sign out
-                    </Button>
-                  }
-                >
-                  Amazon Chime SDK Meeting
-                </Header>
-              </SpaceBetween>
-            }
-          >
-            <SpaceBetween direction='horizontal' size='xs'>
-              <SpaceBetween direction='vertical' size='l'>
-                <Container
-                  className='MeetingContainer'
-                  footer={
-                    <MeetingControlBar
-                      transcribeStatus={transcribeStatus}
-                      setTranscribeStatus={setTranscribeStatus}
-                      sourceLanguages={sourceLanguages}
-                      setSourceLanguage={setSourceLanguage}
-                      setTranscripts={setTranscripts}
-                      localMute={localMute}
-                      setLocalMute={setLocalMute}
+      {({ signOut, user  }) => (
+          <>
+            <ContentLayout
+                header={
+                  <SpaceBetween size='m'>
+                    <Header
+                        className='ContentHeader'
+                        variant='h2'
+                        actions={
+                          <Button variant='primary' onClick={signOut}>
+                            Sign out
+                          </Button>
+                        }
+                    >
+                      Amazon Chime SDK Meeting
+                    </Header>
+                  </SpaceBetween>
+                }
+            >
+              <SpaceBetween direction='horizontal' size='xs'>
+                <SpaceBetween direction='vertical' size='l'>
+                  <Container
+                      className='MeetingContainer'
+                      footer={
+                        <MeetingControlBar
+                            transcribeStatus={transcribeStatus}
+                            setTranscribeStatus={setTranscribeStatus}
+                            sourceLanguages={sourceLanguages}
+                            setSourceLanguage={setSourceLanguage}
+                            setLocalMute={setLocalMute}
+                        />
+                      }
+                  >
+                    <VideoMeeting
+                        setLine={setLine}
+                        setTranscribeStatus={setTranscribeStatus}
+                        setTranslateStatus={setTranslateStatus}
                     />
-                  }
-                >
-                  <VideoMeeting
+                  </Container>
+                </SpaceBetween>
+                <Transcription
+                    targetLanguage={sourceLanguage}
                     setLine={setLine}
-                    setTranscribeStatus={setTranscribeStatus}
-                    setTranslateStatus={setTranslateStatus}
-                  />
-                </Container>
+                    transcripts={transcripts}
+                    lines={lines}
+                ></Transcription>
               </SpaceBetween>
-              <Transcription
-                transcribeStatus={transcribeStatus}
-                setTranscribeStatus={setTranscribeStatus}
-                translateStatus={translateStatus}
-                setTranslateStatus={setTranslateStatus}
-                sourceLanguages={sourceLanguages}
-                targetLanguage={sourceLanguage}
-                sourceLanguage={sourceLanguage}
-                setSourceLanguage={setSourceLanguage}
-                setTranscripts={setTranscripts}
-                setLine={setLine}
-                transcripts={transcripts}
-                lines={lines}
-              ></Transcription>
-            </SpaceBetween>
-          </ContentLayout>
+            </ContentLayout>
 
-          <TranscriptionComponent
-            currentCredentials={currentCredentials}
-            currentSession={currentSession}
-            transcribeStatus={transcribeStatus}
-            sourceLanguage={sourceLanguage}
-            setTranscripts={setTranscripts}
-            transcripts={transcripts}
-            lines={lines}
-            localMute={localMute}
-            setMicrophoneStream={setMicrophoneStream}
-            setTranscriptionClient={setTranscriptionClient}
-            microphoneStream={microphoneStream}
-            transcriptionClient={transcriptionClient}
-            user={user}
-          />
-        </MeetingProvider>
-      )}
+            <TranscriptionComponent
+                currentCredentials={currentCredentials}
+                transcribeStatus={transcribeStatus}
+                sourceLanguage={sourceLanguage}
+                localMute={localMute}
+                setTranscriptionClient={setTranscriptionClient}
+                microphoneStream={microphoneStream}
+                transcriptionClient={transcriptionClient}
+                user={user}
+                setMicrophoneStream={setMicrophoneStream}
+                setTranscripts={setTranscripts}
+            />
+          </>
+        )}
     </Authenticator>
   );
 };

@@ -8,16 +8,36 @@ import '@aws-amplify/ui-react/styles.css';
 import '@cloudscape-design/global-styles/index.css';
 
 import awsExports from './aws-exports';
+import {DataMessage} from "amazon-chime-sdk-js";
+import {tIncomingTranscripts} from "./App";
 Amplify.configure(awsExports);
+
+
+interface tTranscriptionInput {
+  targetLanguage: string;
+  setLine: (a: tIncomingTranscripts[]) => void;
+  transcripts: tIncomingTranscripts;
+  lines: tIncomingTranscripts[];
+}
 
 const AlwaysScrollToBottom = () => {
   const elementRef = useRef();
-  useEffect(() => elementRef.current.scrollIntoView());
+  useEffect(() => {
+    if(elementRef && elementRef.current){
+      // @ts-ignore
+      return elementRef?.current?.scrollIntoView();
+    }
+  });
   return <div ref={elementRef} />;
 };
 
-const handlePartialTranscripts = (incomingTranscripts, outputText, setCurrentLine, setLine) => {
-  const newTranscriptObject = {
+const handlePartialTranscripts = (
+    incomingTranscripts: tIncomingTranscripts,
+    outputText: string,
+    setCurrentLine: (a: tIncomingTranscripts[]) => void,
+    setLine: any
+) => {
+  const newTranscriptObject: tIncomingTranscripts = {
     attendeeName: `${incomingTranscripts.attendeeName}`,
     text: `${outputText}`
   };
@@ -25,23 +45,24 @@ const handlePartialTranscripts = (incomingTranscripts, outputText, setCurrentLin
     // console.log('partial');
     setCurrentLine([newTranscriptObject]);
   } else {
-    setLine((lines) => [
+    setLine((lines: tIncomingTranscripts[]) => [
       ...lines,
       newTranscriptObject,
     ]);
-    setCurrentLine('');
+    setCurrentLine([]);
   }
 }
 
-const Transcription = ({ targetLanguage, setLine, transcripts, lines }) => {
+const Transcription = (props: tTranscriptionInput) => {
+  const { targetLanguage, setLine, transcripts, lines } = props;
   const audioVideo = useAudioVideo();
-  const [incomingTranscripts, setIncomingTranscripts] = useState([]);
-  const [currentLine, setCurrentLine] = useState({});
+  const [incomingTranscripts, setIncomingTranscripts] = useState<tIncomingTranscripts>();
+  const [currentLine, setCurrentLine] = useState<tIncomingTranscripts[]>([]);
 
   useEffect(() => {
     async function transcribeText() {
-      // console.log(`transcripts: ${JSON.stringify(transcripts)}`);
-      if (transcripts.transcriptEvent) {
+      if (transcripts && transcripts.transcriptEvent) {
+        console.log(transcripts, "??")
         handlePartialTranscripts(
             transcripts,
             transcripts.transcriptEvent,
@@ -58,7 +79,7 @@ const Transcription = ({ targetLanguage, setLine, transcripts, lines }) => {
       console.log(
         `incomingTranscripts: ${JSON.stringify(incomingTranscripts)}`,
       );
-      if (incomingTranscripts.transcriptEvent) {
+      if (incomingTranscripts?.transcriptEvent) {
         console.log(`sourceLanguage: ${incomingTranscripts.sourceLanguage}`);
         console.log(`targetLanguage: ${targetLanguage}`);
 
@@ -118,10 +139,10 @@ const Transcription = ({ targetLanguage, setLine, transcripts, lines }) => {
     // console.log('Audio Video found - receive transcriptEvent messages');
     audioVideo.realtimeSubscribeToReceiveDataMessage(
       'transcriptEvent',
-      (data) => {
+      (data: DataMessage) => {
         const receivedData = (data && data.json()) || {};
         const { message } = receivedData;
-        // console.log(`incomingTranscriptEvent: ${message}`);
+        console.log(`incomingTranscriptEvent: ${message}`);
         setIncomingTranscripts(message);
       },
     );
@@ -135,14 +156,14 @@ const Transcription = ({ targetLanguage, setLine, transcripts, lines }) => {
     <Container header={<Header variant='h2'>Transcription</Header>}>
       <SpaceBetween size='xs'>
         <div style={{ height: '663px', width: '240px' }} className={"transcriptionContainer"}>
-          {lines.map((line, index) => (
+          {lines.map((line: tIncomingTranscripts, index: number) => (
                <div key={index}>
                   <strong>{line.attendeeName}</strong>: {line.text}
                   <br />
                 </div>
             ))
           }
-          {currentLine.length > 0 && currentLine.map((line, index) => (
+          {currentLine?.length > 0 && currentLine.map((line, index) => (
               <div key={index}>
                 <strong>{line.attendeeName}</strong>: {line.text}
                 <br />
