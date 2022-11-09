@@ -1,9 +1,9 @@
-var path = require('path');
-var webpack = require('webpack');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const path = require('path');
 
 module.exports = {
-  entry: ['regenerator-runtime/runtime.js', './src/index.js'],
+  entry: ['regenerator-runtime/runtime.js', './src/index.tsx'],
   output: {
     path: path.resolve(__dirname, 'build'),
     filename: 'index_bundle.js',
@@ -45,7 +45,15 @@ module.exports = {
         test: /\.mp3$/,
         loader: 'file-loader',
       },
+      {
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
     ],
+  },
+  resolve: {
+    extensions: ['.tsx', '.ts', '.js'],
   },
   mode: 'development',
   experiments: {
