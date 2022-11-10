@@ -64,32 +64,6 @@ const MeetingControlBar = (props: tMeeetingControlBarInput) => {
     muteMicrophoneContinueTranscribe(microphoneStream, transcriptionClient)
   }, [toggleMute]);
 
-  useEffect(() => {
-    const SECONDS_MS = 14*1000;
-    if(muted) {
-      const interval = setInterval(() => {
-        console.error('Logs every 14 seconds');
-        // TODO(): Send empty string to keep stream alive in audiostream?
-        /**
-         * const command = new StartStreamTranscriptionCommand({
-         *   // The language code for the input audio. Valid values are en-GB, en-US, es-US, fr-CA, and fr-FR
-         *   LanguageCode: "en-US",
-         *   // The encoding used for the input audio. The only valid value is pcm.
-         *   MediaEncoding: "pcm",
-         *   // The sample rate of the input audio in Hertz. We suggest that you use 8000 Hz for low-quality audio and 16000 Hz for
-         *   // high-quality audio. The sample rate must match the sample rate in the audio file.
-         *   MediaSampleRateHertz: 44100,
-         *   AudioStream: audioStream(),
-         * });
-         * const response = await client.send(command);
-         */
-      }, SECONDS_MS);
-
-      return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
-    }
-  }, [toggleMute])
-
-
   const JoinButtonProps = {
     icon: <Meeting />,
     onClick: () => handleJoin(),

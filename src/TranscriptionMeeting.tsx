@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import './App.css';
-import {Amplify, Auth} from 'aws-amplify';
+import {Amplify} from 'aws-amplify';
 import '@aws-amplify/ui-react/styles.css';
 import '@cloudscape-design/global-styles/index.css';
 import * as TranscribeClient from './TranscribeClient';
@@ -99,6 +99,7 @@ export function TranscriptionComponent(props: tTranscriptionInput) {
         sourceLanguage,
         onTranscriptionDataReceived,
         currentCredentials,
+        localMute
       );
     } catch (error) {
       alert('An error occurred while recording: ' + error.message);
