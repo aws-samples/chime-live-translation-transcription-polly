@@ -36,7 +36,7 @@ export const startRecording = async (
 export const muteMicrophoneContinueTranscribe = function (microphoneStream: MicrophoneStream,
 ) {
     if (microphoneStream) {
-        microphoneStream.stop();
+        return microphoneStream.stop();
     }
 }
 
