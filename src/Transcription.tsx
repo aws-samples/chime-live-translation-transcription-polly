@@ -62,7 +62,6 @@ const Transcription = (props: tTranscriptionInput) => {
   useEffect(() => {
     async function transcribeText() {
       if (transcripts && transcripts.transcriptEvent) {
-        console.log(transcripts, "??")
         handlePartialTranscripts(
             transcripts,
             transcripts.transcriptEvent,
