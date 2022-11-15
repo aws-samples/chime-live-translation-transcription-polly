@@ -2,7 +2,7 @@ import {TranscribeStreamingClient} from '@aws-sdk/client-transcribe-streaming';
 import MicrophoneStream from 'microphone-stream';
 import {StartStreamTranscriptionCommand} from '@aws-sdk/client-transcribe-streaming';
 
-const SAMPLE_RATE = 44100;
+let sampleRate = 44100;
 
 export const startRecording = async (
     language: string,
@@ -15,11 +15,12 @@ export const startRecording = async (
         return false;
     }
     console.log(`selected language: ${language}`);
+    const microphoneStream = await createMicrophoneStream();
+
     const transcribeClient = new TranscribeStreamingClient({
         region: 'us-east-1',
         credentials: currentCredentials,
     });
-    const microphoneStream = await createMicrophoneStream();
     return await startStreaming(
         language,
         microphoneStream,
@@ -74,6 +75,10 @@ const createMicrophoneStream = async () => {
     } catch (e) {
         console.error(e);
     }
+    if (mediaStream) {
+        sampleRate = mediaStream.getAudioTracks()[0].getSettings().sampleRate;
+        console.log('Sample rate', sampleRate);
+    }
     const microphoneStream = mediaRecorder
         ? new MicrophoneStream({
             stream: mediaRecorder.stream,
@@ -103,7 +108,7 @@ const startStreaming = async (
     const command = new StartStreamTranscriptionCommand({
         LanguageCode: language,
         MediaEncoding: 'pcm',
-        MediaSampleRateHertz: SAMPLE_RATE,
+        MediaSampleRateHertz: sampleRate,
         AudioStream: audioStream,
     });
     const data = await transcribeClient.send(command);
@@ -156,7 +161,7 @@ const getAudioStream = async function* (microphoneStream: MicrophoneStream, mute
         if (muted) {
             encodedChunk = Buffer.alloc(encodedChunk.length);
         }
-        if (chunk.length <= SAMPLE_RATE) {
+        if (chunk.length <= sampleRate) {
             yield {
                 AudioEvent: {
                     AudioChunk: pcmEncodeChunk(chunk),
