@@ -17,37 +17,22 @@ import {
   VideoInputControl,
   AudioOutputControl,
 } from 'amazon-chime-sdk-component-library-react';
-import { Amplify, API, Auth } from 'aws-amplify';
+import { API, Auth } from 'aws-amplify';
 import '@aws-amplify/ui-react/styles.css';
 import '@cloudscape-design/global-styles/index.css';
 import { MeetingSessionConfiguration } from 'amazon-chime-sdk-js';
 
-import awsExports from './aws-exports';
 import {Loader} from "@aws-amplify/ui-react";
-import {tSourceLanguage} from "./App";
 import {muteMicrophoneContinueTranscribe} from "./TranscribeClient";
-import MicrophoneStream from "microphone-stream";
-import {TranscribeStreamingClient} from "@aws-sdk/client-transcribe-streaming";
-Amplify.configure(awsExports);
+import {tMeetingControlBarInput} from "./types";
 
-interface tMeeetingControlBarInput {
-  transcribeStatus: boolean,
-  setTranscribeStatus: (a: boolean) => void,
-  setSourceLanguage: (a: string) => void,
-  sourceLanguages: tSourceLanguage[],
-  setLocalMute: (a: boolean) => void,
-  microphoneStream: MicrophoneStream,
-  transcriptionClient:TranscribeStreamingClient,
-}
-
-const MeetingControlBar = (props: tMeeetingControlBarInput) => {
+const MeetingControlBar = (props: tMeetingControlBarInput) => {
   const [meetingId, setMeetingId] = useState('');
   const [requestId, setRequestId] = useState('');
   const audioVideo = useAudioVideo();
   const meetingManager = useMeetingManager();
   const { muted, toggleMute } = useToggleLocalMute();
   const [isLoading, setLoading] = useState(false);
-  const [keepEmitting, setTranscribeEmit] = useState(false);
   const {
     transcribeStatus,
     setTranscribeStatus,
@@ -55,13 +40,14 @@ const MeetingControlBar = (props: tMeeetingControlBarInput) => {
     sourceLanguages,
     setLocalMute,
     microphoneStream,
-    transcriptionClient
   } = props;
-  
+
   useEffect(() => {
     setLocalMute(muted);
     // Keep transcription but turn off voice input.
-    muteMicrophoneContinueTranscribe(microphoneStream, transcriptionClient)
+    if(muted){
+      muteMicrophoneContinueTranscribe(microphoneStream)
+    }
   }, [toggleMute]);
 
   const JoinButtonProps = {

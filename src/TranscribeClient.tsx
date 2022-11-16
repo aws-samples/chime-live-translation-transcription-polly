@@ -32,10 +32,8 @@ export const startRecording = async (
 /**
  *
  * @param microphoneStream MicrophoneStream
- * @param transcribeClient TranscribeClient
  */
 export const muteMicrophoneContinueTranscribe = function (microphoneStream: MicrophoneStream,
-                                                          transcribeClient: TranscribeStreamingClient,
 ) {
     if (microphoneStream) {
         microphoneStream.stop();
@@ -105,9 +103,7 @@ const startStreaming = async (
     callback: { (data: any, partial: boolean, transcriptionClient: TranscribeStreamingClient, microphoneStream: MicrophoneStream): void; (arg0: string, arg1: any, arg2: any, arg3: any): void; },
     muted: boolean,
 ) => {
-    console.log(`in startStreaming.  language: ${language}`);
     const audioStream = await getAudioStream(microphoneStream, muted);
-    console.log(audioStream, 'audioStream');
 
     const command = new StartStreamTranscriptionCommand({
         LanguageCode: language,
@@ -120,24 +116,19 @@ const startStreaming = async (
     if (data.TranscriptResultStream) {
         for await (const event of data?.TranscriptResultStream) {
             if (event?.TranscriptEvent?.Transcript) {
-                // console.log(event?.TranscriptEvent?.Transcript);
                 for (const result of event?.TranscriptEvent?.Transcript.Results || []) {
-                    // if (result.IsPartial === false) {
                     if (result?.Alternatives && result?.Alternatives[0].Items) {
                         const noOfResults = result?.Alternatives[0].Items?.length;
-                        // console.log('Items', result?.Alternatives[0].Items);
                         let wholeSentence = ``;
                         for (let i = 0; i < noOfResults; i++) {
                             wholeSentence += ` ${result?.Alternatives[0].Items[i].Content}`;
                         }
-                        // console.log('wholeSentence', wholeSentence);
                         callback(
                             wholeSentence,
                             result.IsPartial,
                             transcribeClient,
                             microphoneStream,
                         );
-                        // }
                     }
                 }
             }
@@ -163,7 +154,6 @@ const getAudioStream = async function* (microphoneStream: MicrophoneStream, mute
         }
         return Buffer.from(pcmEncode(raw));
     };
-    console.log(microphoneStream, 'microphoneStream inside getAudioStream');
 
     // @ts-ignore
     for await (const chunk of microphoneStream) {

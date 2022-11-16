@@ -21,23 +21,10 @@ import {
 import {ICredentials} from "@aws-amplify/core";
 import {CognitoUserSession} from "amazon-cognito-identity-js";
 import {TranscribeStreamingClient} from "@aws-sdk/client-transcribe-streaming";
+import {tIncomingTranscripts, tSourceLanguage} from "./types";
 
 Amplify.configure(awsExports);
 Amplify.addPluggable(new AmazonAIPredictionsProvider());
-
-export interface tSourceLanguage {
-    language: string,
-    code: string
-}
-
-export interface tIncomingTranscripts {
-    attendeeName: string,
-    partial?: boolean,
-    text: string
-    transcriptEvent?: any,
-    sourceLanguage?: string
-}
-
 
 const sourceLanguages: tSourceLanguage[] = [
     {language: 'English - US', code: 'en-US'},
@@ -84,8 +71,6 @@ const App = () => {
             const session: CognitoUserSession = await Auth.currentSession()
             setCurrentSession(session);
             setCurrentCredentials(await Auth.currentUserCredentials());
-            console.log(`authState: ${JSON.stringify(currentSession)}`);
-            console.log(`currentCredentials: ${JSON.stringify(currentCredentials)}`);
         }
 
         getAuth();
@@ -143,8 +128,7 @@ const App = () => {
                                             sourceLanguages={sourceLanguages}
                                             setSourceLanguage={setSourceLanguage}
                                             setLocalMute={setLocalMute}
-                                            microphoneStream={microphoneStream}
-                                            transcriptionClient={transcriptionClient}/>
+                                            microphoneStream={microphoneStream}/>
                                     }
                                 >
                                     <VideoMeeting

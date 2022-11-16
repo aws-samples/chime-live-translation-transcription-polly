@@ -1,24 +1,13 @@
 import React, {useState, useEffect, useRef} from 'react';
 import './App.css';
 import { Container, Header, SpaceBetween } from '@cloudscape-design/components';
-import { Amplify } from 'aws-amplify';
 import Predictions from '@aws-amplify/predictions';
 import { useAudioVideo } from 'amazon-chime-sdk-component-library-react';
 import '@aws-amplify/ui-react/styles.css';
 import '@cloudscape-design/global-styles/index.css';
 
-import awsExports from './aws-exports';
 import {DataMessage} from "amazon-chime-sdk-js";
-import {tIncomingTranscripts} from "./App";
-Amplify.configure(awsExports);
-
-
-interface tTranscriptionInput {
-  targetLanguage: string;
-  setLine: (a: tIncomingTranscripts[]) => void;
-  transcripts: tIncomingTranscripts;
-  lines: tIncomingTranscripts[];
-}
+import {tIncomingTranscripts, tTranscriptionProps} from "./types";
 
 const AlwaysScrollToBottom = () => {
   const elementRef = useRef();
@@ -53,7 +42,7 @@ const handlePartialTranscripts = (
   }
 }
 
-const Transcription = (props: tTranscriptionInput) => {
+const Transcription = (props: tTranscriptionProps) => {
   const { targetLanguage, setLine, transcripts, lines } = props;
   const audioVideo = useAudioVideo();
   const [incomingTranscripts, setIncomingTranscripts] = useState<tIncomingTranscripts>();
@@ -79,10 +68,14 @@ const Transcription = (props: tTranscriptionInput) => {
         `incomingTranscripts: ${JSON.stringify(incomingTranscripts)}`,
       );
       if (incomingTranscripts?.transcriptEvent) {
-        console.log(`sourceLanguage: ${incomingTranscripts.sourceLanguage}`);
-        console.log(`targetLanguage: ${targetLanguage}`);
-
-        if (incomingTranscripts.sourceLanguage !== targetLanguage) {
+        if (incomingTranscripts.sourceLanguage === targetLanguage) {
+          handlePartialTranscripts(
+              incomingTranscripts,
+              incomingTranscripts.transcriptEvent,
+              setCurrentLine,
+              setLine
+          );
+        } else {
           const translateResult = await Predictions.convert({
             translateText: {
               source: {
@@ -92,20 +85,10 @@ const Transcription = (props: tTranscriptionInput) => {
               targetLanguage: targetLanguage,
             },
           });
-          console.log(
-            `translateResult: ${JSON.stringify(translateResult.text)}`,
-          );
 
           handlePartialTranscripts(
               incomingTranscripts,
               translateResult.text,
-              setCurrentLine,
-              setLine
-          );
-        } else {
-          handlePartialTranscripts(
-              incomingTranscripts,
-              incomingTranscripts.transcriptEvent,
               setCurrentLine,
               setLine
           );
@@ -121,7 +104,6 @@ const Transcription = (props: tTranscriptionInput) => {
       return;
     }
     if (transcripts) {
-      // console.log(`Sending transcriptEvent: ${JSON.stringify(transcripts)}`);
       audioVideo.realtimeSendDataMessage(
         'transcriptEvent',
         { message: transcripts },
@@ -135,19 +117,16 @@ const Transcription = (props: tTranscriptionInput) => {
       console.error('No audioVideo');
       return;
     }
-    // console.log('Audio Video found - receive transcriptEvent messages');
     audioVideo.realtimeSubscribeToReceiveDataMessage(
       'transcriptEvent',
       (data: DataMessage) => {
         const receivedData = (data && data.json()) || {};
         const { message } = receivedData;
-        console.log(`incomingTranscriptEvent: ${message}`);
         setIncomingTranscripts(message);
       },
     );
 
     return () => {
-      console.log('unsubscribing from receive data message');
       audioVideo.realtimeUnsubscribeFromReceiveDataMessage('Message');
     };
   }, [audioVideo]);

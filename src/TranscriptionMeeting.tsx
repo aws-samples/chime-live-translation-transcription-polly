@@ -1,36 +1,13 @@
 import React, { useEffect } from 'react';
 import './App.css';
-import {Amplify} from 'aws-amplify';
 import '@aws-amplify/ui-react/styles.css';
 import '@cloudscape-design/global-styles/index.css';
 import * as TranscribeClient from './TranscribeClient';
-import awsExports from './aws-exports';
 import MicrophoneStream from "microphone-stream";
-import {ICredentials} from "@aws-amplify/core";
 import {TranscribeStreamingClient} from "@aws-sdk/client-transcribe-streaming";
-Amplify.configure(awsExports);
+import {tTranscriptionMeetingProps} from "./types";
 
-interface tTranscriptionInput {
-  transcribeStatus: boolean,
-  sourceLanguage: string,
-  microphoneStream: MicrophoneStream,
-  user: any,
-  setMicrophoneStream: any;
-  setTranscripts: any
-  localMute: boolean,
-  setTranscriptionClient: (a: TranscribeStreamingClient) => void,
-  currentCredentials: ICredentials,
-  transcriptionClient: any,
-}
-
-interface tTranscripts {
-  sourceLanguage: string,
-  attendeeName: string,
-  transcriptEvent: any,
-  partial: boolean,
-}
-
-export function TranscriptionComponent(props: tTranscriptionInput) {
+export function TranscriptionComponent(props: tTranscriptionMeetingProps) {
   const {
     transcribeStatus,
     sourceLanguage,
@@ -52,7 +29,7 @@ export function TranscriptionComponent(props: tTranscriptionInput) {
 
   async function toggleTranscribe() {
     if(localMute){
-      // keep transcription, just mute
+      // keep transcription, just mute + prevent spinning up new transcription client
       return;
     }
     if (transcribeStatus) {
