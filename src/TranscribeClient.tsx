@@ -54,24 +54,12 @@ export const stopRecording = function (
 };
 
 const createMicrophoneStream = async () => {
-    let mediaRecorder: MediaRecorder | null = null;
+    let mediaStream: MediaStream | null = null;
     try {
-        // https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API/Migrating_from_webkitAudioContext
-        // @ts-ignore
-        const audioContext = new (window.AudioContext || window?.webkitAudioContext)({
-            sampleRate: 16000
-        });
-        const mediaStream = await window.navigator.mediaDevices.getUserMedia({
+        mediaStream = await window.navigator.mediaDevices.getUserMedia({
             video: false,
             audio: true,
         });
-
-        const mediaStreamSource = audioContext.createMediaStreamSource(mediaStream)
-        const mediaStreamDestination = audioContext.createMediaStreamDestination()
-        mediaStreamDestination.channelCount = 1
-        mediaStreamSource.connect(mediaStreamDestination)
-
-        mediaRecorder = new MediaRecorder(mediaStreamDestination.stream)
     } catch (e) {
         console.error(e);
     }
@@ -81,14 +69,11 @@ const createMicrophoneStream = async () => {
     }
     const microphoneStream = mediaRecorder
         ? new MicrophoneStream({
-            stream: mediaRecorder.stream,
+            stream: mediaStream,
             objectMode: false,
         })
         : new MicrophoneStream();
-    console.log(
-        'inside - createMicrophoneStream - microphoneStream',
-        microphoneStream,
-    );
+
     console.log(
         'inside - after - createMicrophoneStream - microphoneStream',
         microphoneStream,
