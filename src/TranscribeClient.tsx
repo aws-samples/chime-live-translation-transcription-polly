@@ -30,7 +30,7 @@ export const startRecording = async (
 };
 
 /**
- *
+ * Mutes the microphone stream, withou stopping the transcription client.
  * @param microphoneStream MicrophoneStream
  */
 export const muteMicrophoneContinueTranscribe = function (microphoneStream: MicrophoneStream,
@@ -44,16 +44,11 @@ export const stopRecording = function (
     microphoneStream: MicrophoneStream,
     transcribeClient: { destroy: () => void; }
 ) {
-    console.log('stopRecording - pre');
-    console.log(`microphoneStream: ${microphoneStream}`);
-    console.log(`transcribeClient: ${transcribeClient}`);
     if (microphoneStream) {
         microphoneStream.stop();
-        console.log('stopRecording - microphoneStream', microphoneStream);
     }
     if (transcribeClient) {
         transcribeClient.destroy();
-        console.log('stopRecording - transcribeClient', transcribeClient);
     }
 };
 

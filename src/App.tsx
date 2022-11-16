@@ -22,6 +22,7 @@ import {ICredentials} from "@aws-amplify/core";
 import {CognitoUserSession} from "amazon-cognito-identity-js";
 import {TranscribeStreamingClient} from "@aws-sdk/client-transcribe-streaming";
 import {tIncomingTranscripts, tSourceLanguage} from "./types";
+import MicrophoneStream from "microphone-stream";
 
 Amplify.configure(awsExports);
 Amplify.addPluggable(new AmazonAIPredictionsProvider());
@@ -63,7 +64,7 @@ const App = () => {
     const [translateStatus, setTranslateStatus] = useState<boolean>(false);
     const [localMute, setLocalMute] = useState<boolean>(false);
     const [sourceLanguage, setSourceLanguage] = useState<string>('en-US');
-    const [microphoneStream, setMicrophoneStream] = useState();
+    const [microphoneStream, setMicrophoneStream] = useState<MicrophoneStream>();
     const [transcriptionClient, setTranscriptionClient] = useState<TranscribeStreamingClient|null>(null);
 
     useEffect(() => {

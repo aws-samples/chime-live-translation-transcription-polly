@@ -1,5 +1,5 @@
 import MicrophoneStream from "microphone-stream";
-import {TranscribeStreamingClient} from "@aws-sdk/client-transcribe-streaming";
+import {TranscribeStreamingClient, TranscriptEvent} from "@aws-sdk/client-transcribe-streaming";
 import {ICredentials} from "@aws-amplify/core";
 
 export interface tSourceLanguage {
@@ -10,8 +10,8 @@ export interface tSourceLanguage {
 export interface tIncomingTranscripts {
     attendeeName: string,
     partial?: boolean,
-    text: string
-    transcriptEvent?: any,
+    text?: string
+    transcriptEvent?: string,
     sourceLanguage?: string
 }
 
@@ -42,11 +42,11 @@ export interface tTranscriptionMeetingProps {
     sourceLanguage: string,
     microphoneStream: MicrophoneStream,
     user: any,
-    setMicrophoneStream: any;
-    setTranscripts: any
+    setMicrophoneStream: (m: MicrophoneStream) => void,
+    setTranscripts: (t: tIncomingTranscripts) => void,
     localMute: boolean,
     setTranscriptionClient: (a: TranscribeStreamingClient) => void,
     currentCredentials: ICredentials,
-    transcriptionClient: any,
+    transcriptionClient: TranscribeStreamingClient,
 }
 
