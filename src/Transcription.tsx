@@ -9,6 +9,26 @@ import '@cloudscape-design/global-styles/index.css';
 import {DataMessage} from "amazon-chime-sdk-js";
 import {tIncomingTranscripts, tTranscriptionProps} from "./types";
 
+interface tPollyVoiceMap {
+  voice: string,
+  code: string
+}
+
+const sourceLanguages: tPollyVoiceMap[] = [
+  { voice: 'Joey', code: 'en-US' },
+  { voice: 'Brian', code: 'en-GB' },
+  { voice: 'Russell', code: 'en-AU' },
+  { voice: 'Miguel', code: 'es-US' },
+  { voice: 'Liam', code: 'fr-CA' },
+  { voice: 'Mathieu', code: 'fr-FR' },
+  { voice: 'Giorgio', code: 'it-IT' },
+  { voice: 'Hans', code: 'de-DE' },
+  { voice: 'Ricardo', code: 'pt-BR' },
+  { voice: 'Takumi', code: 'ja-JP' },
+  { voice: 'Seoyeon', code: 'ko-KR' },
+  { voice: 'Zhiyu', code: 'zh-CN' },
+];
+
 const AlwaysScrollToBottom = () => {
   const elementRef = useRef();
   useEffect(() => {
@@ -24,7 +44,8 @@ const handlePartialTranscripts = (
     incomingTranscripts: tIncomingTranscripts,
     outputText: string,
     setCurrentLine: (a: tIncomingTranscripts[]) => void,
-    setLine: any
+    setLine: any,
+    targetLanguage: string
 ) => {
   const newTranscriptObject: tIncomingTranscripts = {
     attendeeName: `${incomingTranscripts.attendeeName}`,
@@ -39,9 +60,35 @@ const handlePartialTranscripts = (
       newTranscriptObject,
     ]);
     setCurrentLine([]);
+    if (targetLanguage) {
+      generateAudio(outputText,targetLanguage)
+    }
   }
 }
+const generateAudio = (
+  textToSpeech: string,
+  targetLanguage: string
+) => {
+  var audio = new Audio();
+  console.log("starting the speech to text for the text : " + textToSpeech);
+  var voiceName:tPollyVoiceMap = sourceLanguages.find(e => e.code === targetLanguage);
+  // @ts-ignore
+  Predictions.convert({
+    textToSpeech: {
+      source: {
+        text: textToSpeech,
+        language: targetLanguage
+      },
+      voiceId: voiceName.voice,
+    }
+  }).then(result => {
+      console.log("Generation completed. Playing...")
+      // @ts-ignore
+      audio.src = result.speech.url;
+      audio.play();
+  }).catch(err => console.log("Error occurred" + err))
 
+}
 const Transcription = (props: tTranscriptionProps) => {
   const { targetLanguage, setLine, transcripts, lines } = props;
   const audioVideo = useAudioVideo();
@@ -55,7 +102,8 @@ const Transcription = (props: tTranscriptionProps) => {
             transcripts,
             transcripts.transcriptEvent,
             setCurrentLine,
-            setLine
+            setLine,
+            null
         );
       }
     }
@@ -73,7 +121,8 @@ const Transcription = (props: tTranscriptionProps) => {
               incomingTranscripts,
               incomingTranscripts.transcriptEvent,
               setCurrentLine,
-              setLine
+              setLine,
+              targetLanguage
           );
         } else {
           const translateResult = await Predictions.convert({
@@ -90,7 +139,8 @@ const Transcription = (props: tTranscriptionProps) => {
               incomingTranscripts,
               translateResult.text,
               setCurrentLine,
-              setLine
+              setLine,
+              targetLanguage
           );
         }
       }
