@@ -77,12 +77,7 @@
       }
     }
   },
-  "hosting": {
-    "S3AndCloudFront": {
-      "service": "S3AndCloudFront",
-      "providerPlugin": "awscloudformation"
-    }
-  },
+  "hosting": {},
   "predictions": {
     "translateText112eae37": {
       "providerPlugin": "awscloudformation",

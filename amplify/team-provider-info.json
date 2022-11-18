@@ -1,40 +1,36 @@
 {
-  "dev": {
+  "uat": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-biz307amplify-dev-135947-authRole",
-      "UnauthRoleArn": "arn:aws:iam::104621577074:role/amplify-biz307amplify-dev-135947-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::104621577074:role/amplify-biz307amplify-dev-135947-authRole",
-      "Region": "us-east-1",
-      "DeploymentBucketName": "amplify-biz307amplify-dev-135947-deployment",
-      "UnauthRoleName": "amplify-biz307amplify-dev-135947-unauthRole",
-      "StackName": "amplify-biz307amplify-dev-135947",
-      "StackId": "arn:aws:cloudformation:us-east-1:104621577074:stack/amplify-biz307amplify-dev-135947/df491370-4e4d-11ed-87f4-0ed95facd345",
-      "AmplifyAppId": "d2o3orj6eawa8a"
+      "AuthRoleName": "amplify-biz307amplify-uat-114928-authRole",
+      "UnauthRoleArn": "arn:aws:iam::972210738024:role/amplify-biz307amplify-uat-114928-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::972210738024:role/amplify-biz307amplify-uat-114928-authRole",
+      "Region": "us-west-2",
+      "DeploymentBucketName": "amplify-biz307amplify-uat-114928-deployment",
+      "UnauthRoleName": "amplify-biz307amplify-uat-114928-unauthRole",
+      "StackName": "amplify-biz307amplify-uat-114928",
+      "StackId": "arn:aws:cloudformation:us-west-2:972210738024:stack/amplify-biz307amplify-uat-114928/f7d25770-6708-11ed-a649-0ad36f81d16b",
+      "AmplifyAppId": "d2ta5z7gwjgqk1"
     },
     "categories": {
+      "auth": {
+        "biz307amplify5b0bba085b0bba08": {}
+      },
       "function": {
         "createMeeting": {
-          "deploymentBucketName": "amplify-biz307amplify-dev-135947-deployment",
+          "deploymentBucketName": "amplify-biz307amplify-uat-114928-deployment",
           "s3Key": "amplify-builds/createMeeting-79766772537670634c46-build.zip"
         },
         "endMeeting": {
-          "deploymentBucketName": "amplify-biz307amplify-dev-135947-deployment",
+          "deploymentBucketName": "amplify-biz307amplify-uat-114928-deployment",
           "s3Key": "amplify-builds/endMeeting-52376e485472574c5a6c-build.zip"
         },
         "transcribeMeeting": {
-          "deploymentBucketName": "amplify-biz307amplify-dev-135947-deployment",
+          "deploymentBucketName": "amplify-biz307amplify-uat-114928-deployment",
           "s3Key": "amplify-builds/transcribeMeeting-736c714e49554f454f6d-build.zip"
         }
       },
-      "auth": {
-        "biz307amplify69969494": {},
-        "biz307amplify5b0bba085b0bba08": {}
-      },
       "api": {
         "meetingApi": {}
-      },
-      "hosting": {
-        "S3AndCloudFront": {}
       },
       "predictions": {
         "translateText112eae37": {},
