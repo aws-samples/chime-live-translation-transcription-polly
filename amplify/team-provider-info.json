@@ -35,6 +35,12 @@
       "predictions": {
         "translateText112eae37": {},
         "transcriptionebce4954": {}
+      },
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "d2ta5z7gwjgqk1",
+          "type": "manual"
+        }
       }
     }
   }
