@@ -34,7 +34,8 @@
       },
       "predictions": {
         "translateText112eae37": {},
-        "transcriptionebce4954": {}
+        "transcriptionebce4954": {},
+        "speechGenerator66b08538": {}
       },
       "hosting": {
         "amplifyhosting": {

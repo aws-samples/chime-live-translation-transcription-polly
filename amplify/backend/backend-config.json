@@ -94,6 +94,11 @@
       "providerPlugin": "awscloudformation",
       "service": "Transcribe",
       "convertType": "transcription"
+    },
+    "speechGenerator66b08538": {
+      "providerPlugin": "awscloudformation",
+      "service": "Polly",
+      "convertType": "speechGenerator"
     }
   }
 }
