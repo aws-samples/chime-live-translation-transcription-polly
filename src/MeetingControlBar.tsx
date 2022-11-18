@@ -96,8 +96,13 @@ const MeetingControlBar = (props: tMeetingControlBarInput) => {
     const email = (await Auth.currentUserInfo()).attributes.email;
     const name = (await Auth.currentUserInfo()).attributes.name;
     try {
+      const attendeeCapabilities = {
+        Audio: 'None',
+        Content: 'SendReceive',
+        Video: 'SendReceive',
+      };
       const joinResponse = await API.post('meetingApi', '/create', {
-        body: { name: name, email: email, requestId: requestId },
+        body: { name: name, email: email, requestId: requestId, attendeeCapabilities: attendeeCapabilities },
       });
       const meetingSessionConfiguration = new MeetingSessionConfiguration(
         joinResponse.Meeting,
