@@ -40,6 +40,7 @@ const sourceLanguages: tSourceLanguage[] = [
     {language: 'Japanese', code: 'ja'},
     {language: 'Korean', code: 'ko-KR'},
     {language: 'Chinese - Simplified', code: 'zh-CN'},
+    {language: 'Hindi', code: 'hi-IN'},
 ];
 
 const App = () => {

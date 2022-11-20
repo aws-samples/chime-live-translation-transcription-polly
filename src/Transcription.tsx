@@ -27,6 +27,7 @@ const sourceLanguages: tPollyVoiceMap[] = [
   { voice: 'Takumi', code: 'ja-JP' },
   { voice: 'Seoyeon', code: 'ko-KR' },
   { voice: 'Zhiyu', code: 'zh-CN' },
+  { voice: 'Aditi', code: 'hi-IN' }
 ];
 
 const AlwaysScrollToBottom = () => {
