@@ -13,6 +13,9 @@ interface tPollyVoiceMap {
   voice: string,
   code: string
 }
+// for polly events
+// @ts-ignore
+const pollyevents = [];
 
 const sourceLanguages: tPollyVoiceMap[] = [
   { voice: 'Joey', code: 'en-US' },
@@ -62,19 +65,41 @@ const handlePartialTranscripts = (
     ]);
     setCurrentLine([]);
     if (targetLanguage) {
-      generateAudio(outputText,targetLanguage)
+      pollyevents.unshift({outputText,targetLanguage})
+      console.log("testab:Event added " + pollyevents.length)
+      //generateAudio(outputText,targetLanguage)
     }
   }
 }
-const generateAudio = (
+
+// @ts-ignore
+const process = async (controlprocess) => {
+  console.log("testmaster: process started")
+  while (controlprocess[0]) {
+    // console.log("testab:processing event " + pollyevents.length)
+    if (pollyevents.length > 0) {
+      // console.log("playing " + pollyevents.pop());
+      // @ts-ignore
+      const currentevent = pollyevents.pop()
+      console.log("testab:inside audio generation : " + pollyevents.length)
+      console.log("testab:Current event" + currentevent);
+      await generateAudio(currentevent.outputText, currentevent.targetLanguage);
+    } else {
+      await new Promise((resolve) => setTimeout(() => resolve(0), 100));
+    }
+  }
+  console.log("testmaster: process ended")
+}; 
+
+const generateAudio = async (
   textToSpeech: string,
   targetLanguage: string
 ) => {
   var audio = new Audio();
-  console.log("starting the speech to text for the text : " + textToSpeech);
+  console.log("testab:starting the speech to text for the text : " + textToSpeech);
   var voiceName:tPollyVoiceMap = sourceLanguages.find(e => e.code === targetLanguage);
   // @ts-ignore
-  Predictions.convert({
+  let result = await Predictions.convert({
     textToSpeech: {
       source: {
         text: textToSpeech,
@@ -82,12 +107,25 @@ const generateAudio = (
       },
       voiceId: voiceName.voice,
     }
-  }).then(result => {
-      console.log("Generation completed. Playing...")
-      // @ts-ignore
-      audio.src = result.speech.url;
-      audio.play();
-  }).catch(err => console.log("Error occurred" + err))
+  });
+  console.log("testab:Generation completed. Playing...")
+  // @ts-ignore
+  audio.src = result.speech.url;
+  console.log("testab: received text" + textToSpeech);
+  await new Promise((resolve) => {
+    audio.addEventListener('ended',function(){
+        resolve(0);
+        console.log("testab: After the ended event" + textToSpeech);
+    });
+    audio.play();
+  });
+  console.log("testab: after the await event of ended")
+  // .then(result => {
+  //     console.log("Generation completed. Playing...")
+  //     // @ts-ignore
+  //     audio.src = result.speech.url;
+  //     audio.play();
+  // }).catch(err => console.log("Error occurred" + err))
 
 }
 const Transcription = (props: tTranscriptionProps) => {
@@ -95,6 +133,14 @@ const Transcription = (props: tTranscriptionProps) => {
   const audioVideo = useAudioVideo();
   const [incomingTranscripts, setIncomingTranscripts] = useState<tIncomingTranscripts>();
   const [currentLine, setCurrentLine] = useState<tIncomingTranscripts[]>([]);
+
+  useEffect(() => {
+    let controlprocess = [true]
+    process(controlprocess)
+    return ( () => {
+      controlprocess[0] = false;
+    })
+  }, []);
 
   useEffect(() => {
     async function transcribeText() {
