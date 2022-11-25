@@ -27,10 +27,15 @@
         "transcribeMeeting": {
           "deploymentBucketName": "amplify-biz307amplify-uat-114928-deployment",
           "s3Key": "amplify-builds/transcribeMeeting-736c714e49554f454f6d-build.zip"
+        },
+        "biz307amplify91213d97": {
+          "deploymentBucketName": "amplify-biz307amplify-uat-114928-deployment",
+          "s3Key": "amplify-builds/biz307amplify91213d97-326b4b7275587a4b6379-build.zip"
         }
       },
       "api": {
-        "meetingApi": {}
+        "meetingApi": {},
+        "biz307amplify": {}
       },
       "predictions": {
         "translateText112eae37": {},
