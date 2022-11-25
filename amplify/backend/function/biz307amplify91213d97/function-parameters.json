@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "api": {
+      "biz307amplify": [
+        "Query",
+        "Mutation",
+        "Subscription"
+      ]
+    },
+    "storage": {
+      "message:@model(appsync)": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ],
+      "summary:@model(appsync)": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ],
+      "wordcloud:@model(appsync)": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    }
+  },
+  "lambdaLayers": []
+}
