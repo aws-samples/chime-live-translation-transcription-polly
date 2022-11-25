@@ -10,7 +10,11 @@ import Transcription from './Transcription';
 import MeetingControlBar from './MeetingControlBar';
 import awsExports from './aws-exports';
 import {AmazonAIPredictionsProvider} from '@aws-amplify/predictions';
-
+import {
+    BrowserRouter as Router,
+    Routes,
+    Route
+  } from "react-router-dom";
 import {
     ContentLayout,
     Container,
@@ -23,6 +27,7 @@ import {CognitoUserSession} from "amazon-cognito-identity-js";
 import {TranscribeStreamingClient} from "@aws-sdk/client-transcribe-streaming";
 import {tIncomingTranscripts, tSourceLanguage} from "./types";
 import MicrophoneStream from "microphone-stream";
+import Dashboard from "./Dashboard"
 
 Amplify.configure(awsExports);
 Amplify.addPluggable(new AmazonAIPredictionsProvider());
@@ -99,9 +104,14 @@ const App = () => {
 
 
     return (
+        <Router>
         <Authenticator loginMechanisms={['email']} formFields={formFields}>
             {({signOut, user}) => (
                 <>
+                    <Routes>
+                    <Route path="dashboard" element={<Dashboard />} />
+
+                    <Route path="/" element={<>
                     <ContentLayout
                         header={
                             <SpaceBetween size='m'>
@@ -161,9 +171,13 @@ const App = () => {
                         setMicrophoneStream={setMicrophoneStream}
                         setTranscripts={setTranscripts}
                     />
+                    </>} />
+                    </Routes>
+                    
                 </>
             )}
         </Authenticator>
+        </Router>
     );
 };
 
