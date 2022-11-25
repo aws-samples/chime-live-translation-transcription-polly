@@ -8,6 +8,10 @@ import '@cloudscape-design/global-styles/index.css';
 
 import {DataMessage} from "amazon-chime-sdk-js";
 import {tIncomingTranscripts, tTranscriptionProps} from "./types";
+import {Amplify, Auth, API, graphqlOperation} from "aws-amplify";
+import {createMessage} from "./graphql/mutations";
+import {CreateMessageInput} from "./API"
+
 
 interface tPollyVoiceMap {
   voice: string,
@@ -16,6 +20,32 @@ interface tPollyVoiceMap {
 // for polly events
 // @ts-ignore
 const pollyevents = [];
+
+
+export interface IMessage extends CreateMessageInput {
+  translatedText?: string
+}
+
+const sendMessage = async (speaker: string, message: string, language: string, direction: string, user: string) => {
+  let r = (Math.random() + 1).toString(36).substring(7);
+
+
+  const params: CreateMessageInput = {
+    speaker: speaker,
+    createdAt: r,
+    meetingId: "123",
+    message: message,
+    user: user,
+    language: language,
+    direction: direction,
+  }
+
+  const sendResult:any = await API.graphql(
+    graphqlOperation(createMessage, {
+        input: params
+    })
+  )
+}
 
 const sourceLanguages: tPollyVoiceMap[] = [
   { voice: 'Joey', code: 'en-US' },
@@ -49,7 +79,8 @@ const handlePartialTranscripts = (
     outputText: string,
     setCurrentLine: (a: tIncomingTranscripts[]) => void,
     setLine: any,
-    targetLanguage: string
+    targetLanguage: string,
+    currentAttendee: string
 ) => {
   const newTranscriptObject: tIncomingTranscripts = {
     attendeeName: `${incomingTranscripts.attendeeName}`,
@@ -64,10 +95,19 @@ const handlePartialTranscripts = (
       newTranscriptObject,
     ]);
     setCurrentLine([]);
+
     if (targetLanguage) {
       pollyevents.unshift({outputText,targetLanguage})
       console.log("testab:Event added " + pollyevents.length)
       //generateAudio(outputText,targetLanguage)
+      sendMessage(currentAttendee,outputText,incomingTranscripts.sourceLanguage,"Received",incomingTranscripts.attendeeName).then((response: any) => {
+        console.log(response, "Response from appsync");
+      }).catch(err => console.log("Error occurred" + err));
+    }
+    else {
+      sendMessage(currentAttendee,outputText,incomingTranscripts.sourceLanguage, "Sent",incomingTranscripts.attendeeName).then((response: any) => {
+        console.log(response, "Response from appsync");
+      }).catch(err => console.log("Error occurred" + err));
     }
   }
 }
@@ -130,6 +170,7 @@ const generateAudio = async (
 }
 const Transcription = (props: tTranscriptionProps) => {
   const { targetLanguage, setLine, transcripts, lines } = props;
+  const currentAttendee = transcripts.attendeeName;
   const audioVideo = useAudioVideo();
   const [incomingTranscripts, setIncomingTranscripts] = useState<tIncomingTranscripts>();
   const [currentLine, setCurrentLine] = useState<tIncomingTranscripts[]>([]);
@@ -150,7 +191,8 @@ const Transcription = (props: tTranscriptionProps) => {
             transcripts.transcriptEvent,
             setCurrentLine,
             setLine,
-            null
+            null,
+            currentAttendee
         );
       }
     }
@@ -169,7 +211,8 @@ const Transcription = (props: tTranscriptionProps) => {
               incomingTranscripts.transcriptEvent,
               setCurrentLine,
               setLine,
-              targetLanguage
+              targetLanguage,
+              currentAttendee
           );
         } else {
           const translateResult = await Predictions.convert({
@@ -187,7 +230,8 @@ const Transcription = (props: tTranscriptionProps) => {
               translateResult.text,
               setCurrentLine,
               setLine,
-              targetLanguage
+              targetLanguage,
+              currentAttendee
           );
         }
       }
