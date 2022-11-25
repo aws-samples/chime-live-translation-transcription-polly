@@ -14,6 +14,21 @@
       "build": true,
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
+    },
+    "biz307amplify91213d97": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda",
+      "dependsOn": [
+        {
+          "category": "api",
+          "resourceName": "biz307amplify",
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput"
+          ]
+        }
+      ]
     }
   },
   "api": {
@@ -46,6 +61,30 @@
           ]
         }
       ]
+    },
+    "biz307amplify": {
+      "service": "AppSync",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [
+        {
+          "category": "auth",
+          "resourceName": "biz307amplify5b0bba085b0bba08",
+          "attributes": [
+            "UserPoolId"
+          ]
+        }
+      ],
+      "output": {
+        "authConfig": {
+          "defaultAuthentication": {
+            "authenticationType": "AMAZON_COGNITO_USER_POOLS",
+            "userPoolConfig": {
+              "userPoolId": "authbiz307amplify5b0bba085b0bba08"
+            }
+          },
+          "additionalAuthenticationProviders": []
+        }
+      }
     }
   },
   "auth": {
@@ -100,5 +139,6 @@
       "service": "Polly",
       "convertType": "speechGenerator"
     }
-  }
+  },
+  "custom": {}
 }
