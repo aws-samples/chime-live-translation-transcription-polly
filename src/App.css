@@ -113,19 +113,23 @@ code {
   display: flex;
   flex-direction: row;
   /* background-color: purple; */
+  padding-right: 5rem;
+
 }
 
 .Left {
   min-width: 20%;
-  /* background-color: green; */
+  height: 50vh;
+  border: black 1px solid;
+  margin-left: 2rem;
 }
 
 .Center {
   min-width: 60%;
-  /* background-color: blue; */
 }
 
 .Right {
   min-width: 20%;
-  /* background-color: yellow; */
+  height: 50vh;
+  border: black 1px solid;
 }
