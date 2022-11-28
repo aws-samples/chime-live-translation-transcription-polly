@@ -1,9 +1,20 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import "./App.css";
 import ReactWordcloud from 'react-wordcloud';
 import {onCreateMessage} from "./graphql/subscriptions";
 import {Heading} from '@aws-amplify/ui-react';
 import {API, graphqlOperation} from "aws-amplify";
+
+interface tCreateMessageResponse {
+    createdAt: string
+    direction:string
+    language:string
+    meetingId: string
+    message: string
+    speaker: string
+    updatedAt: string
+    user: string
+}
 
 function Dashboard() {
     const words = [
@@ -25,6 +36,8 @@ function Dashboard() {
         },
     ]
 
+    const [leftSpeakerText, setLeftSpeakerText] = useState<tCreateMessageResponse[]>([])
+    const [rightSpeakerText, setRightSpeakerText] = useState<tCreateMessageResponse[]>([])
 
     useEffect(() => {
         // get subscription messsages when subscriptions kicks off
@@ -35,12 +48,19 @@ function Dashboard() {
                 )) as any).subscribe({
             next: (newData: any) => {
                 const {provider, value} = newData;
-                console.log({provider, value}, "Next props")
+                if(value.data && value.data.onCreateMessage){
+                    const { speaker, message, language } = value.data.onCreateMessage;
+                    if(speaker === "arunmbalaji"){
+                        setLeftSpeakerText([...leftSpeakerText, value.data.onCreateMessage])
+                        console.log("arunmbalaji", value.data.onCreateMessage)
+                    } else {
+                        setRightSpeakerText([...rightSpeakerText, value.data.onCreateMessage])
+                        console.log("other", value.data.onCreateMessage)
+                    }
+                }
             },
             error: (error: any) => console.warn(error)
         });
-        console.log(subscription, "Subscription")
-
         // subscription.unsubscribe();
         // fetch and update translation for both speaker 1 and speaker 2
     }, [])
@@ -54,13 +74,25 @@ function Dashboard() {
             </div>
             <div className="Content">
                 <div className="Left">
-                    <div className={"speakerText"}>Left</div>
+                    Speaker: {leftSpeakerText.length > 0 && leftSpeakerText[0].speaker || "NA"}
+                    {leftSpeakerText.map((val: tCreateMessageResponse) => {
+                        return (
+                            <div className={"speakerText"}>{val.speaker}: {val.message}</div>
+                        )
+                    })}
                 </div>
                 <div className="Center">
                     <ReactWordcloud words={words}/>
                 </div>
                 <div className="Right">
-                    <div className={"speakerText"}>Right</div>
+                    <div className={"speakerText"}>
+                        Speaker: {rightSpeakerText.length > 0 && rightSpeakerText[0].speaker || "NA"}
+                        {rightSpeakerText.map((val: tCreateMessageResponse) => {
+                            return (
+                                <div className={"speakerText"}>{val.speaker}: {val.message}</div>
+                            )
+                        })}
+                    </div>
                 </div>
             </div>
         </div>

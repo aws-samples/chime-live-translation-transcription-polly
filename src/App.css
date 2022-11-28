@@ -122,6 +122,8 @@ code {
   height: 50vh;
   border: black 1px solid;
   margin-left: 2rem;
+  overflow:auto;
+
 }
 
 .Center {
@@ -132,4 +134,5 @@ code {
   min-width: 20%;
   height: 50vh;
   border: black 1px solid;
+  overflow:auto;
 }
