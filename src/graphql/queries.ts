@@ -77,8 +77,6 @@ export const listSummaries = /* GraphQL */ `
         language
         NumberofMessagesProcessed
         NumberofWordsProcssed
-        createdAt
-        updatedAt
       }
       nextToken
     }

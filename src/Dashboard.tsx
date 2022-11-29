@@ -1,9 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import "./App.css";
 import ReactWordcloud from 'react-wordcloud';
-import {onCreateMessage} from "./graphql/subscriptions";
+import {onCreateMessage, onUpdateSummary} from "./graphql/subscriptions";
 import {Heading} from '@aws-amplify/ui-react';
 import {API, graphqlOperation} from "aws-amplify";
+import {BarChart} from "./BarChart";
+import {listSummaries} from "./graphql/queries";
 
 interface tCreateMessageResponse {
     createdAt: string
@@ -14,6 +16,12 @@ interface tCreateMessageResponse {
     speaker: string
     updatedAt: string
     user: string
+}
+
+export interface tSummaryObject {
+    NumberofMessagesProcessed: number
+    NumberofWordsProcssed: number
+    language: string
 }
 
 function Dashboard() {
@@ -38,6 +46,7 @@ function Dashboard() {
 
     const [leftSpeakerText, setLeftSpeakerText] = useState<tCreateMessageResponse[]>([])
     const [rightSpeakerText, setRightSpeakerText] = useState<tCreateMessageResponse[]>([])
+    const [summaryInfo, setSummaryInfo] = useState<tSummaryObject[]>([])
 
     useEffect(() => {
         // get subscription messsages when subscriptions kicks off
@@ -47,22 +56,54 @@ function Dashboard() {
                     onCreateMessage,
                 )) as any).subscribe({
             next: (newData: any) => {
-                const {provider, value} = newData;
+                const { value} = newData;
                 if(value.data && value.data.onCreateMessage){
                     const { speaker, message, language } = value.data.onCreateMessage;
                     if(speaker === "arunmbalaji"){
                         setLeftSpeakerText([...leftSpeakerText, value.data.onCreateMessage])
-                        console.log("arunmbalaji", value.data.onCreateMessage)
                     } else {
                         setRightSpeakerText([...rightSpeakerText, value.data.onCreateMessage])
-                        console.log("other", value.data.onCreateMessage)
                     }
                 }
             },
             error: (error: any) => console.warn(error)
         });
-        // subscription.unsubscribe();
+
+        console.log("listening")
+        // return subscription?.current?.unsubscribe();
         // fetch and update translation for both speaker 1 and speaker 2
+    }, [])
+
+
+    const getSummaries = async () => {
+        const result = await API.graphql(graphqlOperation(
+            listSummaries,
+        )) as any;
+        console.log("getSummaries", result.data.listSummaries.items)
+        if( result.data.listSummaries.items.length > 0){
+            setSummaryInfo(result?.data?.listSummaries.items);
+
+        }
+    }
+
+    // @ts-ignore
+    useEffect(() => {
+        getSummaries()
+    }, [])
+
+    useEffect(() => {
+        const subscription = (
+            API.graphql(
+                graphqlOperation(
+                    onUpdateSummary,
+                )) as any).subscribe({
+            next: async (newData: any) => {
+                const {value} = newData;
+                await getSummaries();
+            },
+            error: (error: any) => console.warn(error)
+        });
+
     }, [])
 
     return (
@@ -77,11 +118,12 @@ function Dashboard() {
                     Speaker: {leftSpeakerText.length > 0 && leftSpeakerText[0].speaker || "NA"}
                     {leftSpeakerText.map((val: tCreateMessageResponse) => {
                         return (
-                            <div className={"speakerText"}>{val.speaker}: {val.message}</div>
+                            <div key={val.createdAt} className={"speakerText"}>{val.speaker}: {val.message}</div>
                         )
                     })}
                 </div>
                 <div className="Center">
+                    <BarChart summaryInfo={summaryInfo}/>
                     <ReactWordcloud words={words}/>
                 </div>
                 <div className="Right">
@@ -89,7 +131,7 @@ function Dashboard() {
                         Speaker: {rightSpeakerText.length > 0 && rightSpeakerText[0].speaker || "NA"}
                         {rightSpeakerText.map((val: tCreateMessageResponse) => {
                             return (
-                                <div className={"speakerText"}>{val.speaker}: {val.message}</div>
+                                <div key={val.createdAt} className={"speakerText"}>{val.speaker}: {val.message}</div>
                             )
                         })}
                     </div>

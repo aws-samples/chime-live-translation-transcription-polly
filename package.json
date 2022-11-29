@@ -24,6 +24,7 @@
     "webpack-dev-server": "^4.11.1"
   },
   "dependencies": {
+    "react-google-charts": "4.0.0",
     "@aws-amplify/predictions": "^4.0.60",
     "@aws-amplify/ui-react": "^3.5.10",
     "@aws-sdk/client-transcribe-streaming": "^3.202.0",

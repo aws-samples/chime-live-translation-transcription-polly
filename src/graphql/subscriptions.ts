@@ -61,8 +61,6 @@ export const onUpdateSummary = /* GraphQL */ `
       language
       NumberofMessagesProcessed
       NumberofWordsProcssed
-      createdAt
-      updatedAt
     }
   }
 `;
