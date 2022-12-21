@@ -1,0 +1,11 @@
+[
+  {
+    "Action": [
+      "chime:createMeeting",
+      "chime:createAttendee"
+    ],
+    "Resource": [
+      "*"
+    ]
+  }
+]

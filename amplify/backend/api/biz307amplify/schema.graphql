@@ -1,0 +1,29 @@
+# This "input" configures a global authorization rule to enable public access to
+# all models in this schema. Learn more about authorization rules here: https://docs.amplify.aws/cli/graphql/authorization-rules
+#input AMPLIFY {
+#  globalAuthRule: AuthRule = { allow: public }
+#} # FOR TESTING ONLY!
+type message @model @auth(rules: [{ allow: private }]) {
+  speaker: String! @primaryKey(sortKeyFields: ["createdAt"])
+  createdAt: String!
+  meetingId: String!
+    @index(
+      name: "byMeetingId"
+      sortKeyFields: ["speaker"]
+      queryField: "messagesByMeetingId"
+    )
+  message: String
+  user: String
+  language: String
+  direction: String
+}
+
+type summary @model @auth(rules: [{ allow: private }]) {
+  language: String! @primaryKey
+  NumberofMessagesProcessed: Int
+  NumberofWordsProcssed: Int
+}
+type wordcloud @model @auth(rules: [{ allow: private }]) {
+  timestamp: String! @primaryKey
+  words: String
+}

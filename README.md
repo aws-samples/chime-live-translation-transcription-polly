@@ -1,17 +1,13 @@
-## My Project
+## Live Translation using AI (Amazon Chime + Amazon Transcribe + Amazon Translate + Amazon Polly)
 
-TODO: Fill this README out!
+### Getting Started
 
-Be sure to:
+1. ``yarn; yarn start``
 
-* Change the title in this README
-* Edit your repository description on GitHub
 
-## Security
-
-See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
-
-## License
-
+### License
 This library is licensed under the MIT-0 License. See the LICENSE file.
+
+### Contributing
+We welcome community contributions and pull requests. See CONTRIBUTING.md for information on how to set up a development environment and submit code.
 

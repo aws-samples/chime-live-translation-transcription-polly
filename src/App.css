@@ -1,0 +1,139 @@
+.App {
+  text-align: center;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+.MeetingContainer {
+  margin-left: 20px;
+}
+.ContentHeader {
+  padding-top: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.pauseTranscription {
+  background-color: lightblue;
+  border-radius: 50%;
+}
+
+.transcriptionContainer {
+  overflow-y: auto;
+}
+
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  position: relative;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+#root {
+  width: 100vw;
+  height: 100vh;
+  /* background-color: red; */
+}
+
+.App {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.Header {
+  /* background-color: cyan; */
+  height: 100px;
+}
+
+.Content {
+  flex: 1 auto;
+  display: flex;
+  flex-direction: row;
+  /* background-color: purple; */
+  padding-right: 5rem;
+
+}
+
+.Left {
+  min-width: 20%;
+  height: 50vh;
+  border: black 1px solid;
+  margin-left: 2rem;
+  overflow:auto;
+
+}
+
+.Center {
+  min-width: 60%;
+  margin:2rem;
+}
+
+.Right {
+  min-width: 20%;
+  height: 50vh;
+  border: black 1px solid;
+  overflow:auto;
+}
