@@ -1,5 +1,10 @@
 ## Live Translation using AI (Amazon Chime + Amazon Transcribe + Amazon Translate + Amazon Polly)
 
+
+### Architecture Diagram
+
+![ArchDiagram.jpg](ArchDiagram.jpg)
+
 ### Getting Started
 
 1. ``yarn; yarn start``
