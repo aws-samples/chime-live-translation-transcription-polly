@@ -67,7 +67,8 @@ const createMicrophoneStream = async () => {
         sampleRate = mediaStream.getAudioTracks()[0].getSettings().sampleRate;
         console.log('Sample rate', sampleRate);
     }
-    const microphoneStream = mediaRecorder
+
+    const microphoneStream = mediaStream
         ? new MicrophoneStream({
             stream: mediaStream,
             objectMode: false,
