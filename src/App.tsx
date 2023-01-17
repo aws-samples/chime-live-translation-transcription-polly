@@ -27,7 +27,6 @@ import {CognitoUserSession} from "amazon-cognito-identity-js";
 import {TranscribeStreamingClient} from "@aws-sdk/client-transcribe-streaming";
 import {tIncomingTranscripts, tSourceLanguage} from "./types";
 import MicrophoneStream from "microphone-stream";
-import Dashboard from "./Dashboard"
 
 Amplify.configure(awsExports);
 Amplify.addPluggable(new AmazonAIPredictionsProvider());
@@ -109,7 +108,6 @@ const App = () => {
             {({signOut, user}) => (
                 <>
                     <Routes>
-                    <Route path="dashboard" element={<Dashboard />} />
 
                     <Route path="/" element={<>
                     <ContentLayout
@@ -173,7 +171,7 @@ const App = () => {
                     />
                     </>} />
                     </Routes>
-                    
+
                 </>
             )}
         </Authenticator>
