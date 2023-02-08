@@ -49,5 +49,70 @@
         }
       }
     }
+  },
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-biz307amplify-dev-150255-authRole",
+      "UnauthRoleArn": "arn:aws:iam::098305555551:role/amplify-biz307amplify-dev-150255-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::098305555551:role/amplify-biz307amplify-dev-150255-authRole",
+      "Region": "us-west-2",
+      "DeploymentBucketName": "amplify-biz307amplify-dev-150255-deployment",
+      "UnauthRoleName": "amplify-biz307amplify-dev-150255-unauthRole",
+      "StackName": "amplify-biz307amplify-dev-150255",
+      "StackId": "arn:aws:cloudformation:us-west-2:098305555551:stack/amplify-biz307amplify-dev-150255/bc6effc0-a804-11ed-9cfb-0635d6fc7381",
+      "AmplifyAppId": "d1mblkumjfbx8x"
+    },
+    "categories": {
+      "auth": {
+        "biz307amplify5b0bba085b0bba08": {}
+      },
+      "function": {
+        "createMeeting": {
+          "deploymentBucketName": "amplify-biz307amplify-dev-150255-deployment",
+          "s3Key": "amplify-builds/createMeeting-79766772537670634c46-build.zip"
+        },
+        "endMeeting": {
+          "deploymentBucketName": "amplify-biz307amplify-dev-150255-deployment",
+          "s3Key": "amplify-builds/endMeeting-52376e485472574c5a6c-build.zip"
+        },
+        "transcribeMeeting": {
+          "deploymentBucketName": "amplify-biz307amplify-dev-150255-deployment",
+          "s3Key": "amplify-builds/transcribeMeeting-736c714e49554f454f6d-build.zip"
+        },
+        "biz307amplify91213d97": {
+          "deploymentBucketName": "amplify-biz307amplify-dev-150255-deployment",
+          "s3Key": "amplify-builds/biz307amplify91213d97-326b4b7275587a4b6379-build.zip"
+        },
+        "biz307amplify": {},
+        "biz307amplify5b0bba085b0bba08": {}
+      },
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "d1mblkumjfbx8x",
+          "type": "manual"
+        }
+      },
+      "api": {
+        "meetingApi": {},
+        "biz307amplify": {}
+      },
+      "predictions": {
+        "translateText112eae37": {},
+        "transcriptionebce4954": {},
+        "speechGenerator66b08538": {}
+      }
+    }
+  },
+  "biz": {
+    "categories": {
+      "function": {
+        "createMeeting": {},
+        "endMeeting": {},
+        "transcribeMeeting": {},
+        "biz307amplify91213d97": {},
+        "biz307amplify": {},
+        "biz307amplify5b0bba085b0bba08": {}
+      }
+    }
   }
 }

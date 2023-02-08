@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "{\"createdOn\":\"Mac\",\"createdBy\":\"Amplify\",\"createdWith\":\"10.3.1\",\"stackType\":\"predictions-Polly\",\"metadata\":{}} chime-live-translation-transcription-polly (uksb-1tsflhn82).",
+  "Description": "{\"createdOn\":\"Mac\",\"createdBy\":\"Amplify\",\"createdWith\":\"10.4.0\",\"stackType\":\"predictions-Polly\",\"metadata\":{}}",
   "Parameters": {
     "authRoleName": {
       "Type": "String"
