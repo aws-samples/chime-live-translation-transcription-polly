@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "An auto-generated nested stack.",
+  "Description": "An auto-generated nested stack chime-live-translation-transcription-polly (uksb-1tsflhn82).",
   "Metadata": {},
   "Parameters": {
     "AppSyncApiId": {
