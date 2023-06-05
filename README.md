@@ -5,6 +5,13 @@
 
 ![ArchDiagram.jpg](ArchDiagram.jpg)
 
+
+### CONTEXT 
+1. This was a prototype to show the "Art of the Possible" of what the AWS services can be paired together
+2. This is NOT a production SaaS product
+3. This was used and testesd using a desktop Chrome browser. Since this prototype, we invite pull requests for further bug fixes and/or browser support.
+
+
 ### Getting Started
 
 1. ``yarn; yarn start``
