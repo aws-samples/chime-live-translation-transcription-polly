@@ -3,28 +3,17 @@
 
 const awsmobile = {
     "aws_project_region": "us-west-2",
-    "aws_cloud_logic_custom": [
-        {
-            "name": "meetingApi",
-            "endpoint": "https://b7tnmae9x0.execute-api.us-west-2.amazonaws.com/dev",
-            "region": "us-west-2"
-        }
-    ],
-    "aws_appsync_graphqlEndpoint": "https://wdim264r5fesvm53buy3yozwdy.appsync-api.us-west-2.amazonaws.com/graphql",
-    "aws_appsync_region": "us-west-2",
-    "aws_appsync_authenticationType": "AMAZON_COGNITO_USER_POOLS",
-    "aws_cognito_identity_pool_id": "us-west-2:177dc1a4-8b3c-4a68-a922-edc118968985",
+    "aws_cognito_identity_pool_id": "us-west-2:805b3a70-961e-4e01-8c9f-ec857d15685f",
     "aws_cognito_region": "us-west-2",
-    "aws_user_pools_id": "us-west-2_P3mUpqcgf",
-    "aws_user_pools_web_client_id": "2n9libitgf94g154333p7bnf7b",
+    "aws_user_pools_id": "us-west-2_5yiPMogen",
+    "aws_user_pools_web_client_id": "1lktkcnjiarrjl3mana4pmg1u8",
     "oauth": {},
     "aws_cognito_username_attributes": [
         "EMAIL"
     ],
     "aws_cognito_social_providers": [],
     "aws_cognito_signup_attributes": [
-        "EMAIL",
-        "NAME"
+        "EMAIL"
     ],
     "aws_cognito_mfa_configuration": "OFF",
     "aws_cognito_mfa_types": [
@@ -36,34 +25,7 @@ const awsmobile = {
     },
     "aws_cognito_verification_mechanisms": [
         "EMAIL"
-    ],
-    "predictions": {
-        "convert": {
-            "translateText": {
-                "region": "us-west-2",
-                "proxy": false,
-                "defaults": {
-                    "sourceLanguage": "en",
-                    "targetLanguage": "es"
-                }
-            },
-            "transcription": {
-                "region": "us-west-2",
-                "proxy": false,
-                "defaults": {
-                    "language": "en-US"
-                }
-            },
-            "speechGenerator": {
-                "region": "us-west-2",
-                "proxy": false,
-                "defaults": {
-                    "VoiceId": "Justin",
-                    "LanguageCode": "en-US"
-                }
-            }
-        }
-    }
+    ]
 };
 
 

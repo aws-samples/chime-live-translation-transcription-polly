@@ -8,11 +8,9 @@ import '@cloudscape-design/global-styles/index.css';
 
 import {DataMessage} from "amazon-chime-sdk-js";
 import {tIncomingTranscripts, tTranscriptionProps} from "./types";
-import {Amplify, Auth, API, graphqlOperation} from "aws-amplify";
+import {API, graphqlOperation} from "aws-amplify";
 import {createMessage} from "./graphql/mutations";
 import {CreateMessageInput} from "./API"
-
-
 interface tPollyVoiceMap {
   voice: string,
   code: string
@@ -21,15 +19,8 @@ interface tPollyVoiceMap {
 // @ts-ignore
 const pollyevents = [];
 
-
-export interface IMessage extends CreateMessageInput {
-  translatedText?: string
-}
-
 const sendMessage = async (speaker: string, message: string, language: string, direction: string, user: string) => {
   let r = (Math.random() + 1).toString(36).substring(7);
-
-
   const params: CreateMessageInput = {
     speaker: speaker,
     createdAt: r,
@@ -39,7 +30,6 @@ const sendMessage = async (speaker: string, message: string, language: string, d
     language: language,
     direction: direction,
   }
-
   const sendResult:any = await API.graphql(
     graphqlOperation(createMessage, {
         input: params
@@ -129,7 +119,7 @@ const process = async (controlprocess) => {
     }
   }
   console.log("testmaster: process ended")
-}; 
+};
 
 const generateAudio = async (
   textToSpeech: string,
@@ -160,13 +150,6 @@ const generateAudio = async (
     audio.play();
   });
   console.log("testab: after the await event of ended")
-  // .then(result => {
-  //     console.log("Generation completed. Playing...")
-  //     // @ts-ignore
-  //     audio.src = result.speech.url;
-  //     audio.play();
-  // }).catch(err => console.log("Error occurred" + err))
-
 }
 const Transcription = (props: tTranscriptionProps) => {
   const { targetLanguage, setLine, transcripts, lines } = props;

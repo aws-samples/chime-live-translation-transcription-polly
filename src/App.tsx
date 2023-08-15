@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import './App.css';
 import {Amplify, Auth} from 'aws-amplify';
+import AmplifyUser from "aws-amplify"
 import {Authenticator} from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 import '@cloudscape-design/global-styles/index.css';
@@ -14,7 +15,7 @@ import {
     BrowserRouter as Router,
     Routes,
     Route
-  } from "react-router-dom";
+} from "react-router-dom";
 import {
     ContentLayout,
     Container,
@@ -27,6 +28,7 @@ import {CognitoUserSession} from "amazon-cognito-identity-js";
 import {TranscribeStreamingClient} from "@aws-sdk/client-transcribe-streaming";
 import {tIncomingTranscripts, tSourceLanguage} from "./types";
 import MicrophoneStream from "microphone-stream";
+import {SignOut} from "@aws-amplify/ui-react/dist/types/components/Authenticator/Authenticator";
 
 Amplify.configure(awsExports);
 Amplify.addPluggable(new AmazonAIPredictionsProvider());
@@ -70,13 +72,14 @@ const App = () => {
     const [localMute, setLocalMute] = useState<boolean>(false);
     const [sourceLanguage, setSourceLanguage] = useState<string>('en-US');
     const [microphoneStream, setMicrophoneStream] = useState<MicrophoneStream>();
-    const [transcriptionClient, setTranscriptionClient] = useState<TranscribeStreamingClient|null>(null);
+    const [transcriptionClient, setTranscriptionClient] = useState<TranscribeStreamingClient | null>(null);
 
     useEffect(() => {
         async function getAuth() {
             const session: CognitoUserSession = await Auth.currentSession()
             setCurrentSession(session);
             setCurrentCredentials(await Auth.currentUserCredentials());
+            return session;
         }
 
         getAuth();
@@ -101,80 +104,77 @@ const App = () => {
         },
     };
 
-
     return (
         <Router>
-        <Authenticator loginMechanisms={['email']} formFields={formFields}>
-            {({signOut, user}) => (
-                <>
-                    <Routes>
-
-                    <Route path="/" element={<>
-                    <ContentLayout
-                        header={
-                            <SpaceBetween size='m'>
-                                <Header
-                                    className='ContentHeader'
-                                    variant='h2'
-                                    actions={
-                                        <Button variant='primary' onClick={signOut}>
-                                            Sign out
-                                        </Button>
+            <Authenticator loginMechanisms={['email']} formFields={formFields}>
+                {(authProps: { signOut?: SignOut; user?: any }) => (
+                    <>
+                        <Routes>
+                            <Route path="/" element={<>
+                                <ContentLayout
+                                    header={
+                                        <SpaceBetween size='m'>
+                                            <Header
+                                                className='ContentHeader'
+                                                variant='h2'
+                                                actions={
+                                                    <Button variant='primary' onClick={authProps.signOut}>
+                                                        Sign out
+                                                    </Button>
+                                                }
+                                            >
+                                                Amazon Chime SDK Meeting
+                                            </Header>
+                                        </SpaceBetween>
                                     }
                                 >
-                                    Amazon Chime SDK Meeting
-                                </Header>
-                            </SpaceBetween>
-                        }
-                    >
-                        <SpaceBetween direction='horizontal' size='xs'>
-                            <SpaceBetween direction='vertical' size='l'>
-                                <Container
-                                    className='MeetingContainer'
-                                    footer={
-                                        <MeetingControlBar
-                                            transcribeStatus={transcribeStatus}
-                                            setTranscribeStatus={setTranscribeStatus}
-                                            sourceLanguages={sourceLanguages}
-                                            setSourceLanguage={setSourceLanguage}
-                                            setLocalMute={setLocalMute}
-                                            microphoneStream={microphoneStream}/>
-                                    }
-                                >
-                                    <VideoMeeting
-                                        setLine={setLine}
-                                        setTranscribeStatus={setTranscribeStatus}
-                                        setTranslateStatus={setTranslateStatus}
-                                    />
-                                </Container>
-                            </SpaceBetween>
-                            <Transcription
-                                targetLanguage={sourceLanguage}
-                                setLine={setLine}
-                                transcripts={transcripts}
-                                lines={lines}
-                            ></Transcription>
-                        </SpaceBetween>
-                    </ContentLayout>
+                                    <SpaceBetween direction='horizontal' size='xs'>
+                                        <SpaceBetween direction='vertical' size='l'>
+                                            <Container
+                                                className='MeetingContainer'
+                                                footer={
+                                                    <MeetingControlBar
+                                                        transcribeStatus={transcribeStatus}
+                                                        setTranscribeStatus={setTranscribeStatus}
+                                                        sourceLanguages={sourceLanguages}
+                                                        setSourceLanguage={setSourceLanguage}
+                                                        setLocalMute={setLocalMute}
+                                                        microphoneStream={microphoneStream}/>
+                                                }
+                                            >
+                                                <VideoMeeting
+                                                    setLine={setLine}
+                                                    setTranscribeStatus={setTranscribeStatus}
+                                                    setTranslateStatus={setTranslateStatus}
+                                                />
+                                            </Container>
+                                        </SpaceBetween>
+                                        <Transcription
+                                            targetLanguage={sourceLanguage}
+                                            setLine={setLine}
+                                            transcripts={transcripts}
+                                            lines={lines}
+                                        ></Transcription>
+                                    </SpaceBetween>
+                                </ContentLayout>
 
-                    <TranscriptionComponent
-                        currentCredentials={currentCredentials}
-                        transcribeStatus={transcribeStatus}
-                        sourceLanguage={sourceLanguage}
-                        localMute={localMute}
-                        setTranscriptionClient={setTranscriptionClient}
-                        microphoneStream={microphoneStream}
-                        transcriptionClient={transcriptionClient}
-                        user={user}
-                        setMicrophoneStream={setMicrophoneStream}
-                        setTranscripts={setTranscripts}
-                    />
-                    </>} />
-                    </Routes>
-
-                </>
-            )}
-        </Authenticator>
+                                <TranscriptionComponent
+                                    currentCredentials={currentCredentials}
+                                    transcribeStatus={transcribeStatus}
+                                    sourceLanguage={sourceLanguage}
+                                    localMute={localMute}
+                                    setTranscriptionClient={setTranscriptionClient}
+                                    microphoneStream={microphoneStream}
+                                    transcriptionClient={transcriptionClient}
+                                    user={authProps.user}
+                                    setMicrophoneStream={setMicrophoneStream}
+                                    setTranscripts={setTranscripts}
+                                />
+                            </>}/>
+                        </Routes>
+                    </>
+                )}
+            </Authenticator>
         </Router>
     );
 };

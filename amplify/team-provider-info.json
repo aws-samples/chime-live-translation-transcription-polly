@@ -1,117 +1,25 @@
 {
-  "uat": {
-    "awscloudformation": {
-      "AuthRoleName": "amplify-biz307amplify-uat-114928-authRole",
-      "UnauthRoleArn": "arn:aws:iam::972210738024:role/amplify-biz307amplify-uat-114928-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::972210738024:role/amplify-biz307amplify-uat-114928-authRole",
-      "Region": "us-west-2",
-      "DeploymentBucketName": "amplify-biz307amplify-uat-114928-deployment",
-      "UnauthRoleName": "amplify-biz307amplify-uat-114928-unauthRole",
-      "StackName": "amplify-biz307amplify-uat-114928",
-      "StackId": "arn:aws:cloudformation:us-west-2:972210738024:stack/amplify-biz307amplify-uat-114928/f7d25770-6708-11ed-a649-0ad36f81d16b",
-      "AmplifyAppId": "d2ta5z7gwjgqk1"
-    },
-    "categories": {
-      "auth": {
-        "biz307amplify5b0bba085b0bba08": {}
-      },
-      "function": {
-        "createMeeting": {
-          "deploymentBucketName": "amplify-biz307amplify-uat-114928-deployment",
-          "s3Key": "amplify-builds/createMeeting-79766772537670634c46-build.zip"
-        },
-        "endMeeting": {
-          "deploymentBucketName": "amplify-biz307amplify-uat-114928-deployment",
-          "s3Key": "amplify-builds/endMeeting-52376e485472574c5a6c-build.zip"
-        },
-        "transcribeMeeting": {
-          "deploymentBucketName": "amplify-biz307amplify-uat-114928-deployment",
-          "s3Key": "amplify-builds/transcribeMeeting-736c714e49554f454f6d-build.zip"
-        },
-        "biz307amplify91213d97": {
-          "deploymentBucketName": "amplify-biz307amplify-uat-114928-deployment",
-          "s3Key": "amplify-builds/biz307amplify91213d97-326b4b7275587a4b6379-build.zip"
-        }
-      },
-      "api": {
-        "meetingApi": {},
-        "biz307amplify": {}
-      },
-      "predictions": {
-        "translateText112eae37": {},
-        "transcriptionebce4954": {},
-        "speechGenerator66b08538": {}
-      },
-      "hosting": {
-        "amplifyhosting": {
-          "appId": "d2ta5z7gwjgqk1",
-          "type": "manual"
-        }
-      }
-    }
-  },
   "dev": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-biz307amplify-dev-150255-authRole",
-      "UnauthRoleArn": "arn:aws:iam::098305555551:role/amplify-biz307amplify-dev-150255-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::098305555551:role/amplify-biz307amplify-dev-150255-authRole",
+      "AuthRoleName": "amplify-livetranslation-dev-165918-authRole",
+      "UnauthRoleArn": "arn:aws:iam::098305555551:role/amplify-livetranslation-dev-165918-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::098305555551:role/amplify-livetranslation-dev-165918-authRole",
       "Region": "us-west-2",
-      "DeploymentBucketName": "amplify-biz307amplify-dev-150255-deployment",
-      "UnauthRoleName": "amplify-biz307amplify-dev-150255-unauthRole",
-      "StackName": "amplify-biz307amplify-dev-150255",
-      "StackId": "arn:aws:cloudformation:us-west-2:098305555551:stack/amplify-biz307amplify-dev-150255/bc6effc0-a804-11ed-9cfb-0635d6fc7381",
-      "AmplifyAppId": "d1mblkumjfbx8x"
+      "DeploymentBucketName": "amplify-livetranslation-dev-165918-deployment",
+      "UnauthRoleName": "amplify-livetranslation-dev-165918-unauthRole",
+      "StackName": "amplify-livetranslation-dev-165918",
+      "StackId": "arn:aws:cloudformation:us-west-2:098305555551:stack/amplify-livetranslation-dev-165918/fca66910-a814-11ed-bcd3-066e5ec9f357",
+      "AmplifyAppId": "d3bh9hnvtzal3g"
     },
     "categories": {
-      "auth": {
-        "biz307amplify5b0bba085b0bba08": {}
-      },
-      "function": {
-        "createMeeting": {
-          "deploymentBucketName": "amplify-biz307amplify-dev-150255-deployment",
-          "s3Key": "amplify-builds/createMeeting-79766772537670634c46-build.zip"
-        },
-        "endMeeting": {
-          "deploymentBucketName": "amplify-biz307amplify-dev-150255-deployment",
-          "s3Key": "amplify-builds/endMeeting-52376e485472574c5a6c-build.zip"
-        },
-        "transcribeMeeting": {
-          "deploymentBucketName": "amplify-biz307amplify-dev-150255-deployment",
-          "s3Key": "amplify-builds/transcribeMeeting-736c714e49554f454f6d-build.zip"
-        },
-        "biz307amplify91213d97": {
-          "deploymentBucketName": "amplify-biz307amplify-dev-150255-deployment",
-          "s3Key": "amplify-builds/biz307amplify91213d97-326b4b7275587a4b6379-build.zip"
-        },
-        "biz307amplify": {},
-        "biz307amplify5b0bba085b0bba08": {}
-      },
       "hosting": {
         "amplifyhosting": {
-          "appId": "d1mblkumjfbx8x",
-          "type": "manual"
+          "appId": "d3bh9hnvtzal3g",
+          "type": "cicd"
         }
       },
-      "api": {
-        "meetingApi": {},
-        "biz307amplify": {}
-      },
-      "predictions": {
-        "translateText112eae37": {},
-        "transcriptionebce4954": {},
-        "speechGenerator66b08538": {}
-      }
-    }
-  },
-  "biz": {
-    "categories": {
-      "function": {
-        "createMeeting": {},
-        "endMeeting": {},
-        "transcribeMeeting": {},
-        "biz307amplify91213d97": {},
-        "biz307amplify": {},
-        "biz307amplify5b0bba085b0bba08": {}
+      "auth": {
+        "livetranslationd26d8d07": {}
       }
     }
   }

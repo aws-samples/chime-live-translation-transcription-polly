@@ -1,10 +1,10 @@
 {
   "version": "1",
   "cognitoConfig": {
-    "identityPoolName": "biz307amplify5b0bba08_identitypool_5b0bba08",
-    "allowUnauthenticatedIdentities": true,
-    "resourceNameTruncated": "biz3075b0bba08",
-    "userPoolName": "biz307amplify5b0bba08_userpool_5b0bba08",
+    "identityPoolName": "livetranslationd26d8d07_identitypool_d26d8d07",
+    "allowUnauthenticatedIdentities": false,
+    "resourceNameTruncated": "livetrd26d8d07",
+    "userPoolName": "livetranslationd26d8d07_userpool_d26d8d07",
     "autoVerifiedAttributes": [
       "email"
     ],
@@ -20,8 +20,7 @@
     "passwordPolicyMinLength": 8,
     "passwordPolicyCharacters": [],
     "requiredAttributes": [
-      "email",
-      "name"
+      "email"
     ],
     "aliasAttributes": [],
     "userpoolClientGenerateSecret": false,
@@ -32,37 +31,18 @@
     "userpoolClientReadAttributes": [
       "email"
     ],
-    "userpoolClientLambdaRole": "biz3075b0bba08_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "livetrd26d8d07_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "5b0bba08",
-    "resourceName": "biz307amplify5b0bba085b0bba08",
+    "sharedId": "d26d8d07",
+    "resourceName": "livetranslationd26d8d07",
     "authSelections": "identityPoolAndUserPool",
-    "useDefault": "manual",
-    "thirdPartyAuth": false,
+    "useDefault": "default",
     "usernameAttributes": [
       "email"
     ],
-    "userPoolGroups": false,
-    "adminQueries": false,
-    "triggers": {},
-    "hostedUI": false,
     "userPoolGroupList": [],
     "serviceName": "Cognito",
     "usernameCaseSensitive": false,
-    "useEnabledMfas": true,
-    "authRoleArn": {
-      "Fn::GetAtt": [
-        "AuthRole",
-        "Arn"
-      ]
-    },
-    "unauthRoleArn": {
-      "Fn::GetAtt": [
-        "UnauthRole",
-        "Arn"
-      ]
-    },
-    "breakCircularDependency": true,
-    "dependsOn": []
+    "useEnabledMfas": true
   }
-} 
+}  

@@ -1,5 +1,5 @@
 {
-  "projectName": "biz307amplify",
+  "projectName": "livetranslation",
   "version": "3.1",
   "frontend": "javascript",
   "javascript": {
@@ -7,8 +7,8 @@
     "config": {
       "SourceDir": "src",
       "DistributionDir": "build",
-      "BuildCommand": "npm run-script build",
-      "StartCommand": "npm run-script start"
+      "BuildCommand": "npm run build",
+      "StartCommand": "npm run start"
     }
   },
   "providers": [

@@ -86,7 +86,11 @@ const startStreaming = async (
     language: string,
     microphoneStream: MicrophoneStream,
     transcribeClient: TranscribeStreamingClient,
-    callback: { (data: any, partial: boolean, transcriptionClient: TranscribeStreamingClient, microphoneStream: MicrophoneStream): void; (arg0: string, arg1: any, arg2: any, arg3: any): void; },
+    callback: { (data: any,
+                 partial: boolean,
+                 transcriptionClient: TranscribeStreamingClient,
+                 microphoneStream: MicrophoneStream
+        ): void; (arg0: string, arg1: any, arg2: any, arg3: any): void; },
     muted: boolean,
 ) => {
     const audioStream = await getAudioStream(microphoneStream, muted);
@@ -109,7 +113,7 @@ const startStreaming = async (
                         for (let i = 0; i < noOfResults; i++) {
                             wholeSentence += ` ${result?.Alternatives[0].Items[i].Content}`;
                         }
-                        callback(
+                        return callback(
                             wholeSentence,
                             result.IsPartial,
                             transcribeClient,
