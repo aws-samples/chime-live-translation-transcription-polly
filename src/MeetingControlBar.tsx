@@ -24,8 +24,7 @@ import { MeetingSessionConfiguration } from 'amazon-chime-sdk-js';
 
 import {Loader} from "@aws-amplify/ui-react";
 import {muteMicrophoneContinueTranscribe} from "./TranscribeClient";
-import {tMeetingControlBarInput} from "./types";
-
+import {tMeetingControlBarInput, tSourceLanguage} from "./types";
 const MeetingControlBar = (props: tMeetingControlBarInput) => {
   const [meetingId, setMeetingId] = useState('');
   const [requestId, setRequestId] = useState('');
@@ -39,6 +38,7 @@ const MeetingControlBar = (props: tMeetingControlBarInput) => {
     setSourceLanguage,
     sourceLanguages,
     setLocalMute,
+    sourceLanguage,
     microphoneStream,
   } = props;
 
@@ -70,24 +70,33 @@ const MeetingControlBar = (props: tMeetingControlBarInput) => {
 
   const TranscribeButtonProps = {
     icon: transcribeStatus ? <Pause className={"pauseTranscription"}/> : <Record />,
-    popOver: sourceLanguages?.map((sourceLanguage) => ({
-      onClick: () => setSourceLanguage(sourceLanguage.code),
-      children: <span>{sourceLanguage.language}</span>,
-    })),
+    popOver: sourceLanguages?.map((srcLang) => {
+      return ({
+        onClick: () => setSourceLanguage(srcLang.code),
+        children: <span>
+                <img src={srcLang.icon} height='18'/>
+                <span>{srcLang.language}
+                  {srcLang.code === sourceLanguage && <span> - (Selected)</span>}
+                </span>
+            </span>,
+      })
+    }),
     onClick: () => handleTranscribe(),
     label: 'Transcribe',
   };
 
   const handleLeave = async () => {
-    await meetingManager.leave();
+    return await meetingManager.leave();
   };
 
   const handleEnd = async () => {
+    // @ts-ignore
     console.log(`Auth ${JSON.stringify(await Auth.currentUserInfo())}`);
     try {
-      await API.post('meetingApi', '/end', { body: { meetingId: meetingId } });
+      return await API.post('meetingApi', '/end', { body: { meetingId: meetingId } });
     } catch (err) {
       console.log(`{err in handleEnd: ${err}`);
+      return;
     }
   };
 
@@ -117,7 +126,8 @@ const MeetingControlBar = (props: tMeetingControlBarInput) => {
       await meetingManager.start();
       meetingManager.invokeDeviceProvider(DeviceLabels.AudioAndVideo);
       setMeetingId(joinResponse.Meeting.MeetingId);
-      setLoading(false)
+      setLoading(false);
+      return DeviceLabels;
     } catch (err) {
       console.log(`err in handleJoin: ${err}`);
     }
@@ -125,6 +135,7 @@ const MeetingControlBar = (props: tMeetingControlBarInput) => {
 
   const handleTranscribe = async () => {
     setTranscribeStatus(!transcribeStatus);
+    return transcribeStatus;
   };
 
   return (
