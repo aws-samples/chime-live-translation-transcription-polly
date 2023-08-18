@@ -71,6 +71,10 @@ export function TranscriptionComponent(props: tTranscriptionMeetingProps) {
       alert('Please select a language');
       return;
     }
+    if(!currentCredentials){
+      console.error('credentials not found');
+      return;
+    }
     try {
       await TranscribeClient.startRecording(
         sourceLanguage,

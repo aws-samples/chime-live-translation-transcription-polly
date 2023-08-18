@@ -38,6 +38,7 @@ const MeetingControlBar = (props: tMeetingControlBarInput) => {
     setSourceLanguage,
     sourceLanguages,
     setLocalMute,
+    sourceLanguage,
     microphoneStream,
   } = props;
 
@@ -69,10 +70,17 @@ const MeetingControlBar = (props: tMeetingControlBarInput) => {
 
   const TranscribeButtonProps = {
     icon: transcribeStatus ? <Pause className={"pauseTranscription"}/> : <Record />,
-    popOver: sourceLanguages?.map((sourceLanguage: tSourceLanguage) => ({
-      onClick: () => setSourceLanguage(sourceLanguage.code),
-      children: <span>{sourceLanguage.language}</span>,
-    })),
+    popOver: sourceLanguages?.map((srcLang) => {
+      return ({
+        onClick: () => setSourceLanguage(srcLang.code),
+        children: <span>
+                <img src={srcLang.icon} height='18'/>
+                <span>{srcLang.language}
+                  {srcLang.code === sourceLanguage && <span> - (Selected)</span>}
+                </span>
+            </span>,
+      })
+    }),
     onClick: () => handleTranscribe(),
     label: 'Transcribe',
   };

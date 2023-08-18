@@ -34,19 +34,19 @@ Amplify.configure(awsExports);
 Amplify.addPluggable(new AmazonAIPredictionsProvider());
 
 const sourceLanguages: tSourceLanguage[] = [
-    {language: 'English - US', code: 'en-US'},
-    {language: 'English - GB', code: 'en-GB'},
-    {language: 'English - AU', code: 'en-AU'},
-    {language: 'Spanish - US', code: 'es-US'},
-    {language: 'French - CA', code: 'fr-CA'},
-    {language: 'French', code: 'fr-FR'},
-    {language: 'Italian', code: 'it-IT'},
-    {language: 'German', code: 'de-DE'},
-    {language: 'Portuguese - BR', code: 'pt-BR'},
-    {language: 'Japanese', code: 'ja'},
-    {language: 'Korean', code: 'ko-KR'},
-    {language: 'Chinese - Simplified', code: 'zh-CN'},
-    {language: 'Hindi', code: 'hi-IN'},
+    {language: 'English - US', code: 'en-US', icon: 'images/en.png'},
+    {language: 'English - GB', code: 'en-GB', icon: 'images/en.png'},
+    {language: 'English - AU', code: 'en-AU', icon: 'images/en.png'},
+    {language: 'Spanish - US', code: 'es-US', icon: 'images/es.png'},
+    {language: 'French - CA', code: 'fr-CA', icon: 'images/fr.png'},
+    {language: 'French', code: 'fr-FR', icon: 'images/fr.png'},
+    {language: 'Italian', code: 'it-IT', icon: 'images/it.png'},
+    {language: 'German', code: 'de-DE', icon: 'images/de.png'},
+    {language: 'Portuguese - BR', code: 'pt-BR', icon: 'images/pt.png'},
+    {language: 'Japanese', code: 'ja-JP', icon: 'images/ja.png'},
+    {language: 'Korean', code: 'ko-KR', icon: 'images/ko.png'},
+    {language: 'Chinese - Simplified', code: 'zh-CN', icon: 'images/zh.png'},
+    {language: 'Hindi', code: 'hi-IN', icon: 'images/hi.png'},
 ];
 
 const App = () => {
@@ -76,13 +76,20 @@ const App = () => {
 
     useEffect(() => {
         async function getAuth() {
-            const session: CognitoUserSession = await Auth.currentSession()
-            setCurrentSession(session);
-            setCurrentCredentials(await Auth.currentUserCredentials());
-            return session;
+            const currSession = await Auth.currentSession();
+            const currCreds = await Auth.currentUserCredentials()
+            return {
+                currSession,
+                currCreds
+            }
         }
 
-        getAuth();
+        getAuth().then((res) => {
+            const {currSession, currCreds} = res;
+            setCurrentSession(currSession);
+            setCurrentCredentials(currCreds);
+            console.log(res)
+        });
     }, []);
 
     const formFields = {
@@ -139,6 +146,7 @@ const App = () => {
                                                         sourceLanguages={sourceLanguages}
                                                         setSourceLanguage={setSourceLanguage}
                                                         setLocalMute={setLocalMute}
+                                                        sourceLanguage={sourceLanguage}
                                                         microphoneStream={microphoneStream}/>
                                                 }
                                             >

@@ -4,7 +4,8 @@ import {ICredentials} from "@aws-amplify/core";
 
 export interface tSourceLanguage {
     language: string,
-    code: string
+    code: string,
+    icon: string
 }
 
 export interface tIncomingTranscripts {
@@ -22,6 +23,7 @@ export interface tMeetingControlBarInput {
     sourceLanguages: tSourceLanguage[],
     setLocalMute: (a: boolean) => void,
     microphoneStream: MicrophoneStream,
+    sourceLanguage: string,
 }
 
 export interface tTranscriptionProps {
