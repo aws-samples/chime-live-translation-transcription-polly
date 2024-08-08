@@ -201,7 +201,7 @@ const Transcription = (props: tTranscriptionProps) => {
                         currentAttendee
                     );
                 } else {
-                    const translateResult = await Predictions.convert({
+                    const translateResult = await Predictions.Predictions.convert({
                         translateText: {
                             source: {
                                 text: incomingTranscripts.transcriptEvent,

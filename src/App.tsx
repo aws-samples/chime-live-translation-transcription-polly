@@ -29,24 +29,35 @@ import {TranscribeStreamingClient} from "@aws-sdk/client-transcribe-streaming";
 import {tIncomingTranscripts, tSourceLanguage} from "./types";
 import MicrophoneStream from "microphone-stream";
 import {SignOut} from "@aws-amplify/ui-react/dist/types/components/Authenticator/Authenticator";
+import {LanguageCode} from "@aws-sdk/client-transcribe-streaming";
 
 Amplify.configure(awsExports);
 Amplify.addPluggable(new AmazonAIPredictionsProvider());
 
 const sourceLanguages: tSourceLanguage[] = [
-    {language: 'English - US', code: 'en-US', icon: 'images/en.png'},
-    {language: 'English - GB', code: 'en-GB', icon: 'images/en.png'},
-    {language: 'English - AU', code: 'en-AU', icon: 'images/en.png'},
-    {language: 'Spanish - US', code: 'es-US', icon: 'images/es.png'},
-    {language: 'French - CA', code: 'fr-CA', icon: 'images/fr.png'},
-    {language: 'French', code: 'fr-FR', icon: 'images/fr.png'},
-    {language: 'Italian', code: 'it-IT', icon: 'images/it.png'},
-    {language: 'German', code: 'de-DE', icon: 'images/de.png'},
-    {language: 'Portuguese - BR', code: 'pt-BR', icon: 'images/pt.png'},
-    {language: 'Japanese', code: 'ja-JP', icon: 'images/ja.png'},
-    {language: 'Korean', code: 'ko-KR', icon: 'images/ko.png'},
-    {language: 'Chinese - Simplified', code: 'zh-CN', icon: 'images/zh.png'},
-    {language: 'Hindi', code: 'hi-IN', icon: 'images/hi.png'},
+    {language: 'English - US', code: LanguageCode.EN_US, icon: 'images/en.png'},
+    {language: 'English - GB', code: LanguageCode.EN_GB, icon: 'images/en.png'},
+    {language: 'English - AU', code: LanguageCode.EN_AU, icon: 'images/en.png'},
+    {language: 'Spanish - US',
+        code: LanguageCode.ES_US, icon: 'images/es.png'},
+    {language: 'French - CA',
+        code: LanguageCode.FR_CA, icon: 'images/fr.png'},
+    {language: 'French',
+        code: LanguageCode.FR_FR, icon: 'images/fr.png'},
+    {language: 'Italian',
+        code: LanguageCode.IT_IT, icon: 'images/it.png'},
+    {language: 'German',
+        code: LanguageCode.DE_DE, icon: 'images/de.png'},
+    {language: 'Portuguese - BR',
+        code: LanguageCode.PT_BR, icon: 'images/pt.png'},
+    {language: 'Japanese',
+        code: LanguageCode.JA_JP, icon: 'images/ja.png'},
+    {language: 'Korean',
+        code: LanguageCode.KO_KR, icon: 'images/ko.png'},
+    {language: 'Chinese - Simplified',
+        code: LanguageCode.ZH_CN, icon: 'images/zh.png'},
+    {language: 'Hindi',
+        code: LanguageCode.HI_IN, icon: 'images/hi.png'},
 ];
 
 const App = () => {
@@ -70,7 +81,7 @@ const App = () => {
     const [transcribeStatus, setTranscribeStatus] = useState<boolean>(false);
     const [translateStatus, setTranslateStatus] = useState<boolean>(false);
     const [localMute, setLocalMute] = useState<boolean>(false);
-    const [sourceLanguage, setSourceLanguage] = useState<string>('en-US');
+    const [sourceLanguage, setSourceLanguage] = useState<LanguageCode>(LanguageCode.EN_US);
     const [microphoneStream, setMicrophoneStream] = useState<MicrophoneStream>();
     const [transcriptionClient, setTranscriptionClient] = useState<TranscribeStreamingClient | null>(null);
 

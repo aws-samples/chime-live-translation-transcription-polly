@@ -14,7 +14,9 @@
 
 ### Getting Started
 
-1. ``yarn; yarn start``
+1. You will want to delete my aws-exports.js file and replace it with your own. You can find this file in the src folder. 
+
+2. ``yarn; yarn start``
 
 
 ### License

@@ -25,6 +25,7 @@ import { MeetingSessionConfiguration } from 'amazon-chime-sdk-js';
 import {Loader} from "@aws-amplify/ui-react";
 import {muteMicrophoneContinueTranscribe} from "./TranscribeClient";
 import {tMeetingControlBarInput, tSourceLanguage} from "./types";
+import {LanguageCode} from "@aws-sdk/client-transcribe-streaming";
 const MeetingControlBar = (props: tMeetingControlBarInput) => {
   const [meetingId, setMeetingId] = useState('');
   const [requestId, setRequestId] = useState('');
@@ -72,7 +73,10 @@ const MeetingControlBar = (props: tMeetingControlBarInput) => {
     icon: transcribeStatus ? <Pause className={"pauseTranscription"}/> : <Record />,
     popOver: sourceLanguages?.map((srcLang) => {
       return ({
-        onClick: () => setSourceLanguage(srcLang.code),
+        onClick: () => {
+          const language = srcLang.code as LanguageCode;
+          setSourceLanguage(language)
+        },
         children: <span>
                 <img src={srcLang.icon} height='18'/>
                 <span>{srcLang.language}
@@ -152,7 +156,7 @@ const MeetingControlBar = (props: tMeetingControlBarInput) => {
         placeholder='Request ID'
         type='text'
       />
-      {isLoading && <Loader/>}
+      {isLoading && <Loader name={"loading-bar"} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}/>}
       {!audioVideo && <ControlBarButton {...JoinButtonProps} />}
       {audioVideo && (
         <>
