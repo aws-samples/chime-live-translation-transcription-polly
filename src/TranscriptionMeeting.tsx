@@ -67,7 +67,7 @@ export function TranscriptionComponent(props: tTranscriptionMeetingProps) {
   };
 
   const startRecording = async () => {
-    if (sourceLanguage === '') {
+    if (!sourceLanguage) {
       alert('Please select a language');
       return;
     }

@@ -152,7 +152,7 @@ const MeetingControlBar = (props: tMeetingControlBarInput) => {
         placeholder='Request ID'
         type='text'
       />
-      {isLoading && <Loader/>}
+      {isLoading && <Loader name={"loading-bar"}/>}
       {!audioVideo && <ControlBarButton {...JoinButtonProps} />}
       {audioVideo && (
         <>

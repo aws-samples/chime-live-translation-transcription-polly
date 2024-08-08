@@ -1,11 +1,12 @@
-import {TranscribeStreamingClient} from '@aws-sdk/client-transcribe-streaming';
+import {StartStreamTranscriptionCommandInput, TranscribeStreamingClient} from '@aws-sdk/client-transcribe-streaming';
 import MicrophoneStream from 'microphone-stream';
 import {StartStreamTranscriptionCommand} from '@aws-sdk/client-transcribe-streaming';
+import {LanguageCode} from "@aws-sdk/client-transcribe-streaming/dist-types/models/models_0";
 
 let sampleRate = 44100;
 
 export const startRecording = async (
-    language: string,
+    language: LanguageCode,
     callback: (data: any, partial: boolean, transcriptionClient: any, microphoneStream: MicrophoneStream) => void,
     currentCredentials: any,
     muted: boolean,
@@ -83,7 +84,7 @@ const createMicrophoneStream = async () => {
 };
 
 const startStreaming = async (
-    language: string,
+    language: LanguageCode,
     microphoneStream: MicrophoneStream,
     transcribeClient: TranscribeStreamingClient,
     callback: { (data: any,
@@ -95,12 +96,14 @@ const startStreaming = async (
 ) => {
     const audioStream = await getAudioStream(microphoneStream, muted);
 
-    const command = new StartStreamTranscriptionCommand({
-        LanguageCode: language,
+    const input: StartStreamTranscriptionCommandInput ={
         MediaEncoding: 'pcm',
         MediaSampleRateHertz: sampleRate,
         AudioStream: audioStream,
-    });
+        LanguageCode: language,
+    }
+
+    const command = new StartStreamTranscriptionCommand(input);
     const data = await transcribeClient.send(command);
 
     if (data.TranscriptResultStream) {
