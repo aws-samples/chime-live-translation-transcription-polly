@@ -1122,7 +1122,7 @@
     "@aws-sdk/util-utf8-node" "3.6.1"
     tslib "^2.0.0"
 
-"@aws-sdk/client-transcribe-streaming@^3.202.0":
+"@aws-sdk/client-transcribe-streaming@^3.624.0":
   version "3.624.0"
   resolved "https://registry.yarnpkg.com/@aws-sdk/client-transcribe-streaming/-/client-transcribe-streaming-3.624.0.tgz#113decc60e7c3e89dcf37f8cb35b4d853407c56c"
   integrity sha512-SCAKvumd0PvN5/Ckgk9M7v/5f0AkreqP+JCEkJ3CJcFj1xba5enaFU1/1vLTptBBFhb/o5M/eEDpvYpfDiI8jg==
