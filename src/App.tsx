@@ -29,7 +29,7 @@ import {TranscribeStreamingClient} from "@aws-sdk/client-transcribe-streaming";
 import {tIncomingTranscripts, tSourceLanguage} from "./types";
 import MicrophoneStream from "microphone-stream";
 import {SignOut} from "@aws-amplify/ui-react/dist/types/components/Authenticator/Authenticator";
-import {LanguageCode} from "@aws-sdk/client-transcribe-streaming/dist-types/models/models_0";
+import {LanguageCode} from "@aws-sdk/client-transcribe-streaming";
 
 Amplify.configure(awsExports);
 Amplify.addPluggable(new AmazonAIPredictionsProvider());

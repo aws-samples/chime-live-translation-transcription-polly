@@ -1,7 +1,7 @@
 import {StartStreamTranscriptionCommandInput, TranscribeStreamingClient} from '@aws-sdk/client-transcribe-streaming';
 import MicrophoneStream from 'microphone-stream';
 import {StartStreamTranscriptionCommand} from '@aws-sdk/client-transcribe-streaming';
-import {LanguageCode} from "@aws-sdk/client-transcribe-streaming/dist-types/models/models_0";
+import {LanguageCode} from "@aws-sdk/client-transcribe-streaming";
 
 let sampleRate = 44100;
 

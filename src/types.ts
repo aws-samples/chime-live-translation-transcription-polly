@@ -1,11 +1,11 @@
 import MicrophoneStream from "microphone-stream";
 import {TranscribeStreamingClient, TranscriptEvent} from "@aws-sdk/client-transcribe-streaming";
 import {ICredentials} from "@aws-amplify/core";
-import {LanguageCode} from "@aws-sdk/client-transcribe-streaming/dist-types/models/models_0";
+import {LanguageCode} from "@aws-sdk/client-transcribe-streaming";
 
 export interface tSourceLanguage {
     language: string,
-    code: string,
+    code: LanguageCode,
     icon: string
 }
 
@@ -20,7 +20,7 @@ export interface tIncomingTranscripts {
 export interface tMeetingControlBarInput {
     transcribeStatus: boolean,
     setTranscribeStatus: (a: boolean) => void,
-    setSourceLanguage: (a: string) => void,
+    setSourceLanguage: (a: LanguageCode) => void,
     sourceLanguages: tSourceLanguage[],
     setLocalMute: (a: boolean) => void,
     microphoneStream: MicrophoneStream,
